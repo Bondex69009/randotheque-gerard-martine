@@ -1456,7 +1456,7 @@
     const add = (key, val) => () => { state[key].add(val); };
     const groups = {
       communes: { title: 'Villages', icon: 'pin', limit: 5, items: communeEntries.filter((d) => d.name !== 'Inconnue')
-        .map((d) => ({ label: d.name, hint: d.code ? `(${d.code})` : '', n: d.n, apply: add('communes', d.name) })) },
+        .map((d) => ({ label: d.name, dept: d.code || '', n: d.n, apply: add('communes', d.name) })) },
       years: { title: 'Années', icon: 'calendar', limit: 4, items: yearEntries
         .map((d) => ({ label: d.name, n: yc.get(d.name), apply: add('years', d.name) })) },
       depts: { title: 'Départements', icon: 'map', limit: 3, items: deptEntries.filter((d) => d.name !== 'Inconnu')
@@ -1470,7 +1470,7 @@
       randos: { title: 'Randos', icon: 'distance', limit: 5, items: RANDOS
         .map((r) => ({ label: r.name, hint: fmtDate(r.date), open: r.id })) },
     };
-    for (const g of Object.values(groups)) for (const it of g.items) { it._n = norm(it.label); it._h = norm(it.hint || ''); }
+    for (const g of Object.values(groups)) for (const it of g.items) { it._n = norm(it.label); it._h = norm(it.hint || it.dept || ''); }
     return groups;
   })();
   let suggestions = [], activeIdx = -1;
@@ -1528,7 +1528,7 @@
         <div class="suggest__head" aria-hidden="true">${icon(g.icon)}${g.title}</div>
         ${items.map((it) => `
         <div class="suggest__opt" role="option" id="q-opt-${i}" data-i="${i++}" aria-selected="false">
-          <span class="suggest__label">${highlight(it.label, tokens)}</span>
+          <span class="suggest__label">${highlight(it.label, tokens)}${it.dept ? ` <span class="suggest__dept">(${esc(it.dept)})</span>` : ''}</span>
           ${it.hint && !it.open ? `<span class="suggest__hint">${esc(it.hint)}</span>` : ''}
           ${it.open ? `<span class="suggest__hint">${esc(it.hint)}</span>` : `<span class="suggest__n">${it.n} rando${it.n > 1 ? 's' : ''}</span>`}
         </div>`).join('')}
