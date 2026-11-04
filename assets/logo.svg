@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1f4d"/>
+      <stop offset="0.55" stop-color="#7a3b5e"/>
+      <stop offset="1" stop-color="#ff9a5c"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe2a8"/>
+      <stop offset="1" stop-color="#ffa45c"/>
+    </linearGradient>
+    <clipPath id="disc"><circle cx="256" cy="256" r="232"/></clipPath>
+  </defs>
+  <circle cx="256" cy="256" r="248" fill="#0d1322"/>
+  <g clip-path="url(#disc)">
+    <rect width="512" height="512" fill="url(#sky)"/>
+    <circle cx="300" cy="250" r="64" fill="url(#sun)"/>
+    <path d="M0 330 L110 210 L170 270 L250 170 L340 280 L400 230 L512 330 V512 H0Z" fill="#1d2a47"/>
+    <path d="M250 170 L280 207 L262 200 L250 215 L238 198 L222 205Z" fill="#eef2fb" opacity="0.9"/>
+    <path d="M110 210 L130 232 L116 228 L104 238 L96 226Z" fill="#eef2fb" opacity="0.75"/>
+    <path d="M0 380 L90 300 L170 350 L260 280 L360 360 L440 310 L512 350 V512 H0Z" fill="#162139"/>
+    <path d="M120 420 C170 400 240 410 270 385 S330 350 360 340" fill="none" stroke="#ffa45c" stroke-width="9" stroke-linecap="round" stroke-dasharray="2 20"/>
+    <path d="M0 430 L512 430 V512 H0Z" fill="#0d1322" opacity="0.6"/>
+  </g>
+  <circle cx="256" cy="256" r="232" fill="none" stroke="#ffa45c" stroke-width="10"/>
+  <text x="256" y="470" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="700" font-size="74" fill="#eef2fb">G&amp;M</text>
+</svg>

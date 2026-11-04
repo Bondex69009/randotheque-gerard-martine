@@ -1,0 +1,71 @@
+# Mise à jour automatique de la Randothèque, toutes les heures, depuis les deux blogs de Gé (photosge30132 et gr-ge-30132).
+# Le site est publié sur GitHub Pages (Settings > Pages > Source : « GitHub Actions »).
+name: Mise à jour horaire
+
+on:
+  schedule:
+    # Toutes les heures à hh:07 (pas à l'heure pile : c'est là que GitHub retarde ou abandonne
+    # le plus ses tâches programmées). Un passage sauté est rattrapé par le suivant.
+    - cron: '7 * * * *'
+  workflow_dispatch:        # bouton « Run workflow » pour lancer une mise à jour à la main
+  push:
+    branches: [main]
+
+permissions:
+  contents: write   # enregistrer les nouveaux GPX dans le dépôt
+  pages: write
+  id-token: write
+
+concurrency:
+  group: randotheque-gerard-martine
+  cancel-in-progress: false
+
+jobs:
+  mise-a-jour:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Récupérer les nouveautés des deux blogs
+        run: node scripts/scrape-blog.mjs
+
+      - name: Générer les données du site
+        run: node scripts/build.mjs
+
+      - name: Enregistrer les nouveaux fichiers dans le dépôt
+        run: |
+          git config user.name "Randothèque (mise à jour automatique)"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A gpx/blog audio data/blog-catalog.json .cache
+          if git diff --cached --quiet; then
+            echo "Rien de nouveau."
+          else
+            git commit -m "Mise à jour depuis les blogs du $(TZ=Europe/Paris date '+%d/%m/%Y à %Hh%M')"
+            # Si le dépôt a bougé entre-temps, on garde nos fichiers fraîchement générés
+            # (« -X theirs » désigne, pendant un rebase, le commit qu'on rejoue : le nôtre).
+            for essai in 1 2 3; do
+              git pull --rebase -X theirs origin main && git push && break
+              echo "Nouvel essai d'enregistrement ($essai)…"; sleep 5
+            done
+          fi
+
+      - name: Préparer le site
+        run: node scripts/build-site.mjs
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Publier sur GitHub Pages
+        id: deploiement
+        uses: actions/deploy-pages@v4

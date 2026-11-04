@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="www.ibpindex.com" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <wpt lat="45.3605242" lon="6.833454">
+    <ele>2028</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 28% durante 179 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3606599" lon="6.8315442">
+    <ele>2078</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 12% durante 121 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3615193" lon="6.8309649">
+    <ele>2093</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 12% durante 138 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3602377" lon="6.8296989">
+    <ele>2116</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 35% durante 156 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3600719" lon="6.8279393">
+    <ele>2168</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 40% durante 146 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3605091" lon="6.8263515">
+    <ele>2227</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 47% durante 84 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3609011" lon="6.8256219">
+    <ele>2266</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 22% durante 293 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3622128" lon="6.824313">
+    <ele>2329</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 47% durante 37 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3621073" lon="6.8239268">
+    <ele>2347</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 34% durante 86 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3615042" lon="6.8233689">
+    <ele>2363</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 41% durante 39 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3612328" lon="6.8231328">
+    <ele>2379</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 22% durante 159 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <wpt lat="45.3608107" lon="6.8219741">
+    <ele>2414</ele>
+    <time>2016-12-16T19:07:35Z</time>
+    <name>Repecho de 11% durante 503 metros</name>
+    <src>www.cicloide.com</src>
+  </wpt>
+  <trk>
+    <name>Lacs des Lozieres-Ge</name>
+    <desc>www.ibpindex.com 37748667548202</desc>
+    <trkseg>
+      <trkpt lat="45.329015372" lon="6.829296330">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.329202208" lon="6.829163448">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.329530292" lon="6.828963055">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.329654996" lon="6.829225939">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.330095511" lon="6.829422348">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.330451573" lon="6.829327095">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.330732401" lon="6.829395086">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.331108786" lon="6.829605821">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.331669914" lon="6.829761884">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.332580399" lon="6.830134377">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.332737013" lon="6.830806995">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.333253769" lon="6.831039859">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.333800488" lon="6.831263019">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.334645834" lon="6.831339910">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.335065427" lon="6.831468035">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.335686220" lon="6.831701789">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.336410112" lon="6.832276172">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.337804339" lon="6.833043271">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.338231193" lon="6.833504024">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.339217360" lon="6.833947583">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.340055577" lon="6.834410798">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.341556997" lon="6.835424135">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.342164600" lon="6.835701237">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.342708861" lon="6.836195333">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.343196543" lon="6.835796875">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.344149207" lon="6.836326699">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.345512097" lon="6.837303069">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.346052470" lon="6.837222205">
+        <ele>2367.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.347572506" lon="6.838156620">
+        <ele>2337.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.349085644" lon="6.838668141">
+        <ele>2325.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.350749965" lon="6.839587444">
+        <ele>2298.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.352020070" lon="6.840792480">
+        <ele>2290.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.352532770" lon="6.841157260">
+        <ele>2283.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.353558150" lon="6.841715160">
+        <ele>2267.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.354221620" lon="6.841908280">
+        <ele>2251.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.354764450" lon="6.841800990">
+        <ele>2245.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.354960470" lon="6.842101390">
+        <ele>2242.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.355427910" lon="6.841779530">
+        <ele>2232.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.355835020" lon="6.842122850">
+        <ele>2223.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356392920" lon="6.841865360">
+        <ele>2219.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356604010" lon="6.841436210">
+        <ele>2216.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356679400" lon="6.841049970">
+        <ele>2203.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356860340" lon="6.841071430">
+        <ele>2202.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356513540" lon="6.840256030">
+        <ele>2201.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356151670" lon="6.839419190">
+        <ele>2192.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356438150" lon="6.839483560">
+        <ele>2186.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356377840" lon="6.838603790">
+        <ele>2175.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356664330" lon="6.838925660">
+        <ele>2172.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356634170" lon="6.838711080">
+        <ele>2172.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356935730" lon="6.839676680">
+        <ele>2163.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.357991180" lon="6.839848340">
+        <ele>2131.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.358217350" lon="6.840320410">
+        <ele>2140.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.358443520" lon="6.840577900">
+        <ele>2122.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359559250" lon="6.841822440">
+        <ele>2118.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360554350" lon="6.842294510">
+        <ele>2088.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360705120" lon="6.842315970">
+        <ele>2085.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360388500" lon="6.840706650">
+        <ele>2068.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360795580" lon="6.840878310">
+        <ele>2062.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361293120" lon="6.841607870">
+        <ele>2055.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361172500" lon="6.840749560">
+        <ele>2051.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361082040" lon="6.839547930">
+        <ele>2043.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360358340" lon="6.837015930">
+        <ele>2027.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360388500" lon="6.836565310">
+        <ele>2022.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360810660" lon="6.835599720">
+        <ele>2021.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360629730" lon="6.835213480">
+        <ele>2022.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360222650" lon="6.835599720">
+        <ele>2019.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359890950" lon="6.835342230">
+        <ele>2020.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359664790" lon="6.834483920">
+        <ele>2019.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359408480" lon="6.833990390">
+        <ele>2018.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359529100" lon="6.833453950">
+        <ele>2020.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360041720" lon="6.833711440">
+        <ele>2026.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360524190" lon="6.833453950">
+        <ele>2028.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360961430" lon="6.832509810">
+        <ele>2047.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360795580" lon="6.831930460">
+        <ele>2061.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360659890" lon="6.831544220">
+        <ele>2078.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360674960" lon="6.831243810">
+        <ele>2084.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361142350" lon="6.831136520">
+        <ele>2090.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361519270" lon="6.830964860">
+        <ele>2093.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361805730" lon="6.830986320">
+        <ele>2091.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361700190" lon="6.830685910">
+        <ele>2105.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361021740" lon="6.830750290">
+        <ele>2110.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360795580" lon="6.830643000">
+        <ele>2106.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361579580" lon="6.829655940">
+        <ele>2135.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361428810" lon="6.829484280">
+        <ele>2138.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360237730" lon="6.829698860">
+        <ele>2116.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360720200" lon="6.828840550">
+        <ele>2151.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361172500" lon="6.828411400">
+        <ele>2170.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361082040" lon="6.828046620">
+        <ele>2189.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360298040" lon="6.828153910">
+        <ele>2167.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360071880" lon="6.827939330">
+        <ele>2168.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360373420" lon="6.826802070">
+        <ele>2206.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360509120" lon="6.826351460">
+        <ele>2233.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360674960" lon="6.826201260">
+        <ele>2238.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360901120" lon="6.825621900">
+        <ele>2271.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361670040" lon="6.825149830">
+        <ele>2297.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362438950" lon="6.824913800">
+        <ele>2318.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362423870" lon="6.824763600">
+        <ele>2321.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362695250" lon="6.824527560">
+        <ele>2324.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362212800" lon="6.824312980">
+        <ele>2329.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362107270" lon="6.823926750">
+        <ele>2350.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361866040" lon="6.823733630">
+        <ele>2354.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361790650" lon="6.823111350">
+        <ele>2376.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361504200" lon="6.823368850">
+        <ele>2363.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361232810" lon="6.823132810">
+        <ele>2379.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361172500" lon="6.822596370">
+        <ele>2386.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361323270" lon="6.821952640">
+        <ele>2412.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360810660" lon="6.821974100">
+        <ele>2414.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359453710" lon="6.820665180">
+        <ele>2434.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359483860" lon="6.819721040">
+        <ele>2453.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.358126880" lon="6.817296330">
+        <ele>2468.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.357026200" lon="6.816438020">
+        <ele>2469.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356815110" lon="6.815493880">
+        <ele>2482.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356362760" lon="6.814227880">
+        <ele>2475.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356875420" lon="6.811674420">
+        <ele>2478.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356980970" lon="6.810923400">
+        <ele>2476.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356830180" lon="6.810129460">
+        <ele>2468.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.357161900" lon="6.808927830">
+        <ele>2472.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.357116670" lon="6.808069530">
+        <ele>2470.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356815110" lon="6.807189760">
+        <ele>2471.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356845260" lon="6.805923760">
+        <ele>2490.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356423080" lon="6.804915250">
+        <ele>2468.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356543700" lon="6.803456130">
+        <ele>2465.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.357101590" lon="6.801932630">
+        <ele>2480.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356498470" lon="6.804250060">
+        <ele>2472.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356362760" lon="6.805108370">
+        <ele>2460.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356830180" lon="6.806138340">
+        <ele>2492.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356739720" lon="6.807168300">
+        <ele>2470.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.357071430" lon="6.808198270">
+        <ele>2468.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356769870" lon="6.810537160">
+        <ele>2470.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356905580" lon="6.811266720">
+        <ele>2477.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356377840" lon="6.814163510">
+        <ele>2476.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356800030" lon="6.815536800">
+        <ele>2482.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.356935730" lon="6.816416560">
+        <ele>2468.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.358051500" lon="6.817425070">
+        <ele>2466.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.358760150" lon="6.818626700">
+        <ele>2462.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359483860" lon="6.819828330">
+        <ele>2452.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359468790" lon="6.820622260">
+        <ele>2435.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360931270" lon="6.822017010">
+        <ele>2412.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361368500" lon="6.821866810">
+        <ele>2414.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361157430" lon="6.823111350">
+        <ele>2379.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361594660" lon="6.823368850">
+        <ele>2364.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361835890" lon="6.823046980">
+        <ele>2377.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361835890" lon="6.823411760">
+        <ele>2360.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362122340" lon="6.823862370">
+        <ele>2351.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362152500" lon="6.824312980">
+        <ele>2329.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362665100" lon="6.824420270">
+        <ele>2326.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362348490" lon="6.824827970">
+        <ele>2321.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.362552030" lon="6.824988900">
+        <ele>2316.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361549430" lon="6.825149830">
+        <ele>2291.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360961430" lon="6.825707730">
+        <ele>2269.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360463880" lon="6.826458750">
+        <ele>2231.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360313110" lon="6.827252690">
+        <ele>2198.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360086960" lon="6.827960790">
+        <ele>2168.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360674960" lon="6.828110990">
+        <ele>2177.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361293120" lon="6.828239740">
+        <ele>2187.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360855890" lon="6.828497230">
+        <ele>2173.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360282960" lon="6.829827610">
+        <ele>2115.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361293120" lon="6.829462830">
+        <ele>2138.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361579580" lon="6.829720320">
+        <ele>2133.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360810660" lon="6.830557170">
+        <ele>2106.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361474040" lon="6.830664450">
+        <ele>2108.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361866040" lon="6.830793200">
+        <ele>2105.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361866040" lon="6.831029240">
+        <ele>2089.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361534350" lon="6.831029240">
+        <ele>2092.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.361097120" lon="6.831179440">
+        <ele>2090.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360644810" lon="6.831157980">
+        <ele>2086.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360674960" lon="6.831672970">
+        <ele>2065.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360901120" lon="6.832595650">
+        <ele>2047.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360117110" lon="6.833754360">
+        <ele>2026.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359438630" lon="6.833518330">
+        <ele>2019.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.359694950" lon="6.835020360">
+        <ele>2021.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360237730" lon="6.835556800">
+        <ele>2019.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360690040" lon="6.835363690">
+        <ele>2022.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360659890" lon="6.835707010">
+        <ele>2020.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.360267880" lon="6.836758430">
+        <ele>2026.00</ele>
+        <time>1899-12-29T23:00:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

@@ -1,0 +1,1898 @@
+{
+  "44.049,3.699": {
+    "commune": "Val-d'Aigoual",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.259,6.260": {
+    "commune": "Fontcouverte-la-Toussuire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.059,6.526": {
+    "commune": "Névache",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "45.162,6.495": {
+    "commune": "Valmeinier",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.917,6.415": {
+    "commune": "Vallouise-Pelvoux",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.920,5.500": {
+    "commune": "Rustrel",
+    "deptCode": "84",
+    "deptName": "Vaucluse",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "45.259,6.261": {
+    "commune": "Fontcouverte-la-Toussuire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.940,5.108": {
+    "commune": "Saumane-de-Vaucluse",
+    "deptCode": "84",
+    "deptName": "Vaucluse",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "45.238,6.274": {
+    "commune": "Villarembert",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.502,4.126": {
+    "commune": "Le Grau-du-Roi",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.103,3.542": {
+    "commune": "Val-d'Aigoual",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.507,3.664": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.623,3.560": {
+    "commune": "Monts-de-Randon",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "42.960,9.449": {
+    "commune": "Rogliano",
+    "deptCode": "2B",
+    "deptName": "Haute-Corse",
+    "region": "Corse"
+  },
+  "44.507,3.662": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "42.304,9.150": {
+    "commune": "Corte",
+    "deptCode": "2B",
+    "deptName": "Haute-Corse",
+    "region": "Corse"
+  },
+  "42.128,9.134": {
+    "commune": "Vivario",
+    "deptCode": "2B",
+    "deptName": "Haute-Corse",
+    "region": "Corse"
+  },
+  "42.229,9.030": {
+    "commune": "Corte",
+    "deptCode": "2B",
+    "deptName": "Haute-Corse",
+    "region": "Corse"
+  },
+  "41.630,8.813": {
+    "commune": "Belvédère-Campomoro",
+    "deptCode": "2A",
+    "deptName": "Corse-du-Sud",
+    "region": "Corse"
+  },
+  "42.297,8.885": {
+    "commune": "Albertacce",
+    "deptCode": "2B",
+    "deptName": "Haute-Corse",
+    "region": "Corse"
+  },
+  "42.276,8.904": {
+    "commune": "Albertacce",
+    "deptCode": "2B",
+    "deptName": "Haute-Corse",
+    "region": "Corse"
+  },
+  "41.340,9.258": {
+    "commune": "Bonifacio",
+    "deptCode": "2A",
+    "deptName": "Corse-du-Sud",
+    "region": "Corse"
+  },
+  "41.796,9.225": {
+    "commune": "Quenza",
+    "deptCode": "2A",
+    "deptName": "Corse-du-Sud",
+    "region": "Corse"
+  },
+  "43.831,5.159": {
+    "commune": "Oppède",
+    "deptCode": "84",
+    "deptName": "Vaucluse",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "45.282,6.299": {
+    "commune": "Jarrier",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "41.515,8.950": {
+    "commune": "Sartène",
+    "deptCode": "2A",
+    "deptName": "Corse-du-Sud",
+    "region": "Corse"
+  },
+  "16.258,-61.212": {
+    "commune": "Saint-François",
+    "deptCode": "971",
+    "deptName": "Guadeloupe",
+    "region": "Guadeloupe"
+  },
+  "16.242,-61.340": {
+    "commune": "Sainte-Anne",
+    "deptCode": "971",
+    "deptName": "Guadeloupe",
+    "region": "Guadeloupe"
+  },
+  "16.352,-61.724": {
+    "commune": "Sainte-Rose",
+    "deptCode": "971",
+    "deptName": "Guadeloupe",
+    "region": "Guadeloupe"
+  },
+  "16.034,-61.670": {
+    "commune": "Saint-Claude",
+    "deptCode": "971",
+    "deptName": "Guadeloupe",
+    "region": "Guadeloupe"
+  },
+  "16.176,-61.694": {
+    "commune": "Petit-Bourg",
+    "deptCode": "971",
+    "deptName": "Guadeloupe",
+    "region": "Guadeloupe"
+  },
+  "16.486,-61.442": {
+    "commune": "Anse-Bertrand",
+    "deptCode": "971",
+    "deptName": "Guadeloupe",
+    "region": "Guadeloupe"
+  },
+  "16.041,-61.638": {
+    "commune": "Capesterre-Belle-Eau",
+    "deptCode": "971",
+    "deptName": "Guadeloupe",
+    "region": "Guadeloupe"
+  },
+  "44.629,6.822": {
+    "commune": "Ceillac",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.758,6.993": {
+    "commune": "Abriès-Ristolas",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.757,6.992": {
+    "commune": "Abriès-Ristolas",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.690,6.976": {
+    "commune": "Molines-en-Queyras",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.812,6.967": {
+    "commune": "Abriès-Ristolas",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "45.236,6.278": {
+    "commune": "Villarembert",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.090,6.437": {
+    "commune": "Valloire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.207,6.845": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.225,6.653": {
+    "commune": "Modane",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.812,6.968": {
+    "commune": "Abriès-Ristolas",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "48.223,-4.509": {
+    "commune": "Crozon",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "48.282,-4.599": {
+    "commune": "Camaret-sur-Mer",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "48.281,-4.598": {
+    "commune": "Camaret-sur-Mer",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "48.225,-4.504": {
+    "commune": "Crozon",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "45.381,7.090": {
+    "commune": "Bonneval-sur-Arc",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "48.060,-4.708": {
+    "commune": "Cléden-Cap-Sizun",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "48.458,-5.096": {
+    "commune": "Ouessant",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "48.310,-4.551": {
+    "commune": "Roscanvel",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "48.315,-4.549": {
+    "commune": "Roscanvel",
+    "deptCode": "29",
+    "deptName": "Finistère",
+    "region": "Bretagne"
+  },
+  "45.237,6.275": {
+    "commune": "Villarembert",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.227,6.405": {
+    "commune": "Montricher-Albanne",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.218,5.210": {
+    "commune": "Mollans-sur-Ouvèze",
+    "deptCode": "26",
+    "deptName": "Drôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.232,6.753": {
+    "commune": "Aussois",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.582,3.104": {
+    "commune": "Les Aires",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "45.185,6.318": {
+    "commune": "Albiez-Montrond",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.966,3.941": {
+    "commune": "Sauve",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.582,3.103": {
+    "commune": "Les Aires",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.582,3.012": {
+    "commune": "Colombières-sur-Orb",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.611,2.975": {
+    "commune": "Rosis",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.611,2.976": {
+    "commune": "Rosis",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.579,3.007": {
+    "commune": "Colombières-sur-Orb",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.573,2.968": {
+    "commune": "Mons",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "44.648,3.065": {
+    "commune": "Nasbinals",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.653,2.866": {
+    "commune": "Curières",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "44.640,2.810": {
+    "commune": "Montpeyroux",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "44.591,2.925": {
+    "commune": "Saint-Chély-d'Aubrac",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "44.218,5.211": {
+    "commune": "Mollans-sur-Ouvèze",
+    "deptCode": "26",
+    "deptName": "Drôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.578,3.064": {
+    "commune": "Les Salces",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.252,6.727": {
+    "commune": "Aussois",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.162,6.494": {
+    "commune": "Valmeinier",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.329,6.829": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.260,6.900": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "-21.061,55.450": {
+    "commune": "La Possession",
+    "deptCode": "974",
+    "deptName": "La Réunion",
+    "region": "La Réunion"
+  },
+  "-21.065,55.525": {
+    "commune": "Salazie",
+    "deptCode": "974",
+    "deptName": "La Réunion",
+    "region": "La Réunion"
+  },
+  "45.238,6.275": {
+    "commune": "Villarembert",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "-21.137,55.472": {
+    "commune": "Cilaos",
+    "deptCode": "974",
+    "deptName": "La Réunion",
+    "region": "La Réunion"
+  },
+  "45.203,6.445": {
+    "commune": "Valloire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.176,6.490": {
+    "commune": "Valmeinier",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.210,6.420": {
+    "commune": "Montricher-Albanne",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.491,3.741": {
+    "commune": "Cubières",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "-21.072,55.386": {
+    "commune": "Saint-Paul",
+    "deptCode": "974",
+    "deptName": "La Réunion",
+    "region": "La Réunion"
+  },
+  "44.514,3.651": {
+    "commune": "Chadenet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.374,7.053": {
+    "commune": "Bonneval-sur-Arc",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.387,3.617": {
+    "commune": "Les Bondons",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.452,3.748": {
+    "commune": "Cubières",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.485,3.669": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.259,1.140": {
+    "commune": "Lauzerte",
+    "deptCode": "82",
+    "deptName": "Tarn-et-Garonne",
+    "region": "Occitanie"
+  },
+  "44.387,3.819": {
+    "commune": "Pont de Montvert - Sud Mont Lozère",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "43.830,3.618": {
+    "commune": "Saint-Jean-de-Buèges",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "44.361,3.767": {
+    "commune": "Pont de Montvert - Sud Mont Lozère",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.020,4.504": {
+    "commune": "Flaux",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.889,3.790": {
+    "commune": "Le Bouchet-Saint-Nicolas",
+    "deptCode": "43",
+    "deptName": "Haute-Loire",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.046,3.890": {
+    "commune": "Le Puy-en-Velay",
+    "deptCode": "43",
+    "deptName": "Haute-Loire",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.935,3.984": {
+    "commune": "Le Monastier-sur-Gazeille",
+    "deptCode": "43",
+    "deptName": "Haute-Loire",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.769,3.883": {
+    "commune": "Pradelles",
+    "deptCode": "43",
+    "deptName": "Haute-Loire",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.260,6.901": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.648,3.803": {
+    "commune": "Cheylard-l'Évêque",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.391,6.319": {
+    "commune": "Saint François Longchamp",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.592,3.905": {
+    "commune": "La Bastide-Puylaurent",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.177,6.332": {
+    "commune": "Albiez-Montrond",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.149,6.635": {
+    "commune": "Modane",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.090,6.436": {
+    "commune": "Valloire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.372,7.050": {
+    "commune": "Bonneval-sur-Arc",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.621,2.820": {
+    "commune": "Orcival",
+    "deptCode": "63",
+    "deptName": "Puy-de-Dôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.574,2.916": {
+    "commune": "Chambon-sur-Lac",
+    "deptCode": "63",
+    "deptName": "Puy-de-Dôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.764,2.957": {
+    "commune": "Orcines",
+    "deptCode": "63",
+    "deptName": "Puy-de-Dôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.502,2.890": {
+    "commune": "Besse-et-Saint-Anastaise",
+    "deptCode": "63",
+    "deptName": "Puy-de-Dôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.541,2.863": {
+    "commune": "Chambon-sur-Lac",
+    "deptCode": "63",
+    "deptName": "Puy-de-Dôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.884,4.267": {
+    "commune": "Nîmes",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.689,4.285": {
+    "commune": "Vauvert",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.540,2.861": {
+    "commune": "Chambon-sur-Lac",
+    "deptCode": "63",
+    "deptName": "Puy-de-Dôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.798,4.378": {
+    "commune": "Caissargues",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.382,6.736": {
+    "commune": "Pralognan-la-Vanoise",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.912,4.424": {
+    "commune": "Poulx",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.309,7.036": {
+    "commune": "Bessans",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.756,4.515": {
+    "commune": "Bellegarde",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.880,4.442": {
+    "commune": "Marguerittes",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.088,4.181": {
+    "commune": "Monteils",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.806,4.247": {
+    "commune": "Langlade",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.940,4.351": {
+    "commune": "Sainte-Anastasie",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.928,4.544": {
+    "commune": "Saint-Bonnet-du-Gard",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.873,3.940": {
+    "commune": "Corconne",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.265,6.298": {
+    "commune": "Saint-Pancrace",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.638,4.298": {
+    "commune": "Vauvert",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.912,4.425": {
+    "commune": "Poulx",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.202,6.444": {
+    "commune": "Valloire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.015,4.429": {
+    "commune": "Uzès",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.234,6.742": {
+    "commune": "Aussois",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.761,4.948": {
+    "commune": "Eygalières",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.918,4.555": {
+    "commune": "Sernhac",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.367,6.363": {
+    "commune": "Saint François Longchamp",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.827,4.201": {
+    "commune": "Saint-Côme-et-Maruéjols",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.081,4.613": {
+    "commune": "Saint-Paul-les-Fonts",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.788,4.187": {
+    "commune": "Calvisson",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.926,4.264": {
+    "commune": "La Calmette",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.240,6.268": {
+    "commune": "Villarembert",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.515,4.141": {
+    "commune": "Le Grau-du-Roi",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.933,4.295": {
+    "commune": "Dions",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.839,4.355": {
+    "commune": "Nîmes",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.115,4.650": {
+    "commune": "Laudun-l'Ardoise",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.797,4.378": {
+    "commune": "Caissargues",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.861,4.692": {
+    "commune": "Boulbon",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.197,4.263": {
+    "commune": "Allègre-les-Fumades",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.853,4.309": {
+    "commune": "Nîmes",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.965,3.853": {
+    "commune": "Saint-Hippolyte-du-Fort",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.624,3.560": {
+    "commune": "Monts-de-Randon",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "43.937,3.706": {
+    "commune": "Ganges",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.876,4.406": {
+    "commune": "Nîmes",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.639,4.297": {
+    "commune": "Vauvert",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.449,3.929": {
+    "commune": "Villefort",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.550,3.831": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.332,3.895": {
+    "commune": "Vialas",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.454,3.562": {
+    "commune": "Saint-Étienne-du-Valdonnez",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.490,3.739": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.272,3.730": {
+    "commune": "Cassagnas",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "42.882,-0.143": {
+    "commune": "Cauterets",
+    "deptCode": "65",
+    "deptName": "Hautes-Pyrénées",
+    "region": "Occitanie"
+  },
+  "44.168,3.840": {
+    "commune": "Saint-Étienne-Vallée-Française",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.348,3.620": {
+    "commune": "Bédouès-Cocurès",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "42.854,-0.098": {
+    "commune": "Cauterets",
+    "deptCode": "65",
+    "deptName": "Hautes-Pyrénées",
+    "region": "Occitanie"
+  },
+  "42.852,-0.136": {
+    "commune": "Cauterets",
+    "deptCode": "65",
+    "deptName": "Hautes-Pyrénées",
+    "region": "Occitanie"
+  },
+  "42.852,-0.137": {
+    "commune": "Cauterets",
+    "deptCode": "65",
+    "deptName": "Hautes-Pyrénées",
+    "region": "Occitanie"
+  },
+  "45.259,6.254": {
+    "commune": "Fontcouverte-la-Toussuire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.332,7.016": {
+    "commune": "Bessans",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.985,6.485": {
+    "commune": "Le Monêtier-les-Bains",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.363,3.744": {
+    "commune": "Pont de Montvert - Sud Mont Lozère",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.990,6.080": {
+    "commune": "Les Deux Alpes",
+    "deptCode": "38",
+    "deptName": "Isère",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "42.751,0.087": {
+    "commune": "Gavarnie-Gèdre",
+    "deptCode": "65",
+    "deptName": "Hautes-Pyrénées",
+    "region": "Occitanie"
+  },
+  "42.736,-0.011": {
+    "commune": "Gavarnie-Gèdre",
+    "deptCode": "65",
+    "deptName": "Hautes-Pyrénées",
+    "region": "Occitanie"
+  },
+  "42.873,-0.109": {
+    "commune": "Cauterets",
+    "deptCode": "65",
+    "deptName": "Hautes-Pyrénées",
+    "region": "Occitanie"
+  },
+  "45.057,6.315": {
+    "commune": "La Grave",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.882,4.098": {
+    "commune": "Crespian",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.224,6.946": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.636,3.369": {
+    "commune": "Liausson",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.992,3.923": {
+    "commune": "Fressac",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.080,4.373": {
+    "commune": "Belvézet",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.769,3.848": {
+    "commune": "Saint-Mathieu-de-Tréviers",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "45.232,6.752": {
+    "commune": "Aussois",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.114,4.518": {
+    "commune": "Cavillargues",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.377,6.352": {
+    "commune": "Saint François Longchamp",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.282,6.300": {
+    "commune": "Jarrier",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.059,6.525": {
+    "commune": "Névache",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.694,3.471": {
+    "commune": "Saint-Saturnin-de-Lucian",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "44.117,4.285": {
+    "commune": "Seynes",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.366,6.363": {
+    "commune": "Saint François Longchamp",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.110,3.945": {
+    "commune": "Mialet",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.695,3.474": {
+    "commune": "Saint-Saturnin-de-Lucian",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "44.115,4.174": {
+    "commune": "Mons",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.224,3.514": {
+    "commune": "Fraissinet-de-Fourques",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.632,3.463": {
+    "commune": "Monts-de-Randon",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "43.855,3.564": {
+    "commune": "Rogues",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.480,3.454": {
+    "commune": "Balsièges",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "43.897,4.743": {
+    "commune": "Barbentane",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.990,3.679": {
+    "commune": "Saint-Privat-d'Allier",
+    "deptCode": "43",
+    "deptName": "Haute-Loire",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.860,4.729": {
+    "commune": "Tarascon",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.803,3.403": {
+    "commune": "Saint-Alban-sur-Limagnole",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.721,3.283": {
+    "commune": "Peyre en Aubrac",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.959,3.549": {
+    "commune": "Saugues",
+    "deptCode": "43",
+    "deptName": "Haute-Loire",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.591,2.922": {
+    "commune": "Saint-Chély-d'Aubrac",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "44.520,2.819": {
+    "commune": "Saint-Côme-d'Olt",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "43.791,3.734": {
+    "commune": "Saint-Martin-de-Londres",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.834,5.093": {
+    "commune": "Taillades",
+    "deptCode": "84",
+    "deptName": "Vaucluse",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.599,2.397": {
+    "commune": "Conques-en-Rouergue",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "44.349,3.950": {
+    "commune": "Génolhac",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.605,2.487": {
+    "commune": "Sénergues",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "45.043,3.883": {
+    "commune": "Le Puy-en-Velay",
+    "deptCode": "43",
+    "deptName": "Haute-Loire",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.025,5.518": {
+    "commune": "Corrençon-en-Vercors",
+    "deptCode": "38",
+    "deptName": "Isère",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.073,5.580": {
+    "commune": "Villard-de-Lans",
+    "deptCode": "38",
+    "deptName": "Isère",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.207,6.835": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.662,3.047": {
+    "commune": "Nasbinals",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.063,5.557": {
+    "commune": "Villard-de-Lans",
+    "deptCode": "38",
+    "deptName": "Isère",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.554,2.672": {
+    "commune": "Estaing",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "45.252,6.726": {
+    "commune": "Aussois",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.213,5.560": {
+    "commune": "Autrans-Méaudre en Vercors",
+    "deptCode": "38",
+    "deptName": "Isère",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "47.546,-2.891": {
+    "commune": "Arzon",
+    "deptCode": "56",
+    "deptName": "Morbihan",
+    "region": "Bretagne"
+  },
+  "47.664,-2.753": {
+    "commune": "Vannes",
+    "deptCode": "56",
+    "deptName": "Morbihan",
+    "region": "Bretagne"
+  },
+  "45.164,5.597": {
+    "commune": "Lans-en-Vercors",
+    "deptCode": "38",
+    "deptName": "Isère",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "45.262,6.901": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.035,3.868": {
+    "commune": "Saint-Bonnet-de-Salendrinque",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "47.606,-2.793": {
+    "commune": "Île-d'Arz",
+    "deptCode": "56",
+    "deptName": "Morbihan",
+    "region": "Bretagne"
+  },
+  "44.049,3.701": {
+    "commune": "Val-d'Aigoual",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "44.152,4.677": {
+    "commune": "Chusclan",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "47.601,-2.852": {
+    "commune": "Île-aux-Moines",
+    "deptCode": "56",
+    "deptName": "Morbihan",
+    "region": "Bretagne"
+  },
+  "44.033,4.492": {
+    "commune": "Saint-Hippolyte-de-Montaigu",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "47.619,-2.737": {
+    "commune": "Séné",
+    "deptCode": "56",
+    "deptName": "Morbihan",
+    "region": "Bretagne"
+  },
+  "44.028,3.826": {
+    "commune": "Colognac",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.707,7.331": {
+    "commune": "Beaulieu-sur-Mer",
+    "deptCode": "06",
+    "deptName": "Alpes-Maritimes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.698,4.883": {
+    "commune": "Mouriès",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.064,3.926": {
+    "commune": "Thoiras-Corbès",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.630,5.179": {
+    "commune": "La Barben",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.769,4.732": {
+    "commune": "Saint-Étienne-du-Grès",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.722,7.357": {
+    "commune": "Èze",
+    "deptCode": "06",
+    "deptName": "Alpes-Maritimes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.760,7.457": {
+    "commune": "Roquebrune-Cap-Martin",
+    "deptCode": "06",
+    "deptName": "Alpes-Maritimes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.591,1.872": {
+    "commune": "Espagnac-Sainte-Eulalie",
+    "deptCode": "46",
+    "deptName": "Lot",
+    "region": "Occitanie"
+  },
+  "43.279,5.306": {
+    "commune": "Marseille",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.599,2.399": {
+    "commune": "Conques-en-Rouergue",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "44.607,2.035": {
+    "commune": "Figeac",
+    "deptCode": "46",
+    "deptName": "Lot",
+    "region": "Occitanie"
+  },
+  "44.518,3.603": {
+    "commune": "Sainte-Hélène",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "44.597,2.232": {
+    "commune": "Livinhac-le-Haut",
+    "deptCode": "12",
+    "deptName": "Aveyron",
+    "region": "Occitanie"
+  },
+  "44.505,1.656": {
+    "commune": "Cabrerets",
+    "deptCode": "46",
+    "deptName": "Lot",
+    "region": "Occitanie"
+  },
+  "44.484,1.643": {
+    "commune": "Bouziès",
+    "deptCode": "46",
+    "deptName": "Lot",
+    "region": "Occitanie"
+  },
+  "44.555,1.770": {
+    "commune": "Marcilhac-sur-Célé",
+    "deptCode": "46",
+    "deptName": "Lot",
+    "region": "Occitanie"
+  },
+  "44.491,3.740": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.166,6.494": {
+    "commune": "Valmeinier",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.490,3.741": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.057,6.283": {
+    "commune": "La Grave",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.551,3.825": {
+    "commune": "Mont Lozère et Goulet",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "45.421,6.381": {
+    "commune": "Saint François Longchamp",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "48.590,-1.590": {
+    "commune": "Roz-sur-Couesnon",
+    "deptCode": "35",
+    "deptName": "Ille-et-Vilaine",
+    "region": "Bretagne"
+  },
+  "48.688,-1.937": {
+    "commune": "Saint-Coulomb",
+    "deptCode": "35",
+    "deptName": "Ille-et-Vilaine",
+    "region": "Bretagne"
+  },
+  "44.963,6.611": {
+    "commune": "Val-des-Prés",
+    "deptCode": "05",
+    "deptName": "Hautes-Alpes",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "48.633,-1.509": {
+    "commune": null
+  },
+  "43.619,4.068": {
+    "commune": "Candillargues",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "48.674,-1.857": {
+    "commune": "Cancale",
+    "deptCode": "35",
+    "deptName": "Ille-et-Vilaine",
+    "region": "Bretagne"
+  },
+  "43.808,4.040": {
+    "commune": "Aspères",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "45.203,6.616": {
+    "commune": "Saint-André",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.739,4.182": {
+    "commune": "Aigues-Vives",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.808,3.810": {
+    "commune": "Rouet",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "43.412,3.697": {
+    "commune": "Sète",
+    "deptCode": "34",
+    "deptName": "Hérault",
+    "region": "Occitanie"
+  },
+  "45.258,6.261": {
+    "commune": "Fontcouverte-la-Toussuire",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "44.332,4.790": {
+    "commune": "Saint-Restitut",
+    "deptCode": "26",
+    "deptName": "Drôme",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.892,5.114": {
+    "commune": "Lagnes",
+    "deptCode": "84",
+    "deptName": "Vaucluse",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "44.346,1.308": {
+    "commune": "Lendou-en-Quercy",
+    "deptCode": "46",
+    "deptName": "Lot",
+    "region": "Occitanie"
+  },
+  "44.448,1.434": {
+    "commune": "Cahors",
+    "deptCode": "46",
+    "deptName": "Lot",
+    "region": "Occitanie"
+  },
+  "44.101,1.082": {
+    "commune": "Moissac",
+    "deptCode": "82",
+    "deptName": "Tarn-et-Garonne",
+    "region": "Occitanie"
+  },
+  "45.266,6.297": {
+    "commune": "Saint-Pancrace",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.999,0.757": {
+    "commune": "Miradoux",
+    "deptCode": "32",
+    "deptName": "Gers",
+    "region": "Occitanie"
+  },
+  "44.069,0.900": {
+    "commune": "Auvillar",
+    "deptCode": "82",
+    "deptName": "Tarn-et-Garonne",
+    "region": "Occitanie"
+  },
+  "45.240,6.270": {
+    "commune": "Villarembert",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.982,0.498": {
+    "commune": "La Romieu",
+    "deptCode": "32",
+    "deptName": "Gers",
+    "region": "Occitanie"
+  },
+  "43.528,4.142": {
+    "commune": "Le Grau-du-Roi",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.950,0.201": {
+    "commune": "Montréal",
+    "deptCode": "32",
+    "deptName": "Gers",
+    "region": "Occitanie"
+  },
+  "43.860,0.094": {
+    "commune": "Eauze",
+    "deptCode": "32",
+    "deptName": "Gers",
+    "region": "Occitanie"
+  },
+  "45.300,6.937": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.935,0.619": {
+    "commune": "Lectoure",
+    "deptCode": "32",
+    "deptName": "Gers",
+    "region": "Occitanie"
+  },
+  "43.703,-0.266": {
+    "commune": "Aire-sur-l'Adour",
+    "deptCode": "40",
+    "deptName": "Landes",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "43.955,0.374": {
+    "commune": "Condom",
+    "deptCode": "32",
+    "deptName": "Gers",
+    "region": "Occitanie"
+  },
+  "43.603,-0.333": {
+    "commune": "Miramont-Sensacq",
+    "deptCode": "40",
+    "deptName": "Landes",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "43.534,-0.415": {
+    "commune": "Arzacq-Arraziguet",
+    "deptCode": "64",
+    "deptName": "Pyrénées-Atlantiques",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "43.440,-0.697": {
+    "commune": "Maslacq",
+    "deptCode": "64",
+    "deptName": "Pyrénées-Atlantiques",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "45.315,6.829": {
+    "commune": "Val-Cenis",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.759,-0.035": {
+    "commune": "Nogaro",
+    "deptCode": "32",
+    "deptName": "Gers",
+    "region": "Occitanie"
+  },
+  "43.490,-0.543": {
+    "commune": "Pomps",
+    "deptCode": "64",
+    "deptName": "Pyrénées-Atlantiques",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "43.321,-0.756": {
+    "commune": "Navarrenx",
+    "deptCode": "64",
+    "deptName": "Pyrénées-Atlantiques",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "43.308,-0.881": {
+    "commune": "Lichos",
+    "deptCode": "64",
+    "deptName": "Pyrénées-Atlantiques",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "43.167,-1.237": {
+    "commune": "Saint-Jean-Pied-de-Port",
+    "deptCode": "64",
+    "deptName": "Pyrénées-Atlantiques",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "42.254,3.182": {
+    "commune": null
+  },
+  "48.647,-2.009": {
+    "commune": "Saint-Malo",
+    "deptCode": "35",
+    "deptName": "Ille-et-Vilaine",
+    "region": "Bretagne"
+  },
+  "48.626,-2.142": {
+    "commune": "Saint-Briac-sur-Mer",
+    "deptCode": "35",
+    "deptName": "Ille-et-Vilaine",
+    "region": "Bretagne"
+  },
+  "43.248,-1.080": {
+    "commune": "Ostabat-Asme",
+    "deptCode": "64",
+    "deptName": "Pyrénées-Atlantiques",
+    "region": "Nouvelle-Aquitaine"
+  },
+  "42.362,3.147": {
+    "commune": null
+  },
+  "42.147,2.568": {
+    "commune": null
+  },
+  "48.639,-2.253": {
+    "commune": "Saint-Cast-le-Guildo",
+    "deptCode": "22",
+    "deptName": "Côtes-d'Armor",
+    "region": "Bretagne"
+  },
+  "42.329,3.158": {
+    "commune": null
+  },
+  "48.631,-2.061": {
+    "commune": "Dinard",
+    "deptCode": "35",
+    "deptName": "Ille-et-Vilaine",
+    "region": "Bretagne"
+  },
+  "48.597,-2.537": {
+    "commune": "Pléneuf-Val-André",
+    "deptCode": "22",
+    "deptName": "Côtes-d'Armor",
+    "region": "Bretagne"
+  },
+  "48.596,-2.537": {
+    "commune": "Pléneuf-Val-André",
+    "deptCode": "22",
+    "deptName": "Côtes-d'Armor",
+    "region": "Bretagne"
+  },
+  "48.602,-2.190": {
+    "commune": "Saint-Jacut-de-la-Mer",
+    "deptCode": "22",
+    "deptName": "Côtes-d'Armor",
+    "region": "Bretagne"
+  },
+  "44.348,3.804": {
+    "commune": "Pont de Montvert - Sud Mont Lozère",
+    "deptCode": "48",
+    "deptName": "Lozère",
+    "region": "Occitanie"
+  },
+  "48.654,-2.332": {
+    "commune": "Plévenon",
+    "deptCode": "22",
+    "deptName": "Côtes-d'Armor",
+    "region": "Bretagne"
+  },
+  "48.631,-2.467": {
+    "commune": "Erquy",
+    "deptCode": "22",
+    "deptName": "Côtes-d'Armor",
+    "region": "Bretagne"
+  },
+  "43.121,6.260": {
+    "commune": "La Londe-les-Maures",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.132,6.360": {
+    "commune": "Le Lavandou",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.188,6.642": {
+    "commune": "Ramatuelle",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.010,6.383": {
+    "commune": "Hyères",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.100,6.326": {
+    "commune": "Bormes-les-Mimosas",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "42.254,-1.429": {
+    "commune": null
+  },
+  "43.954,4.425": {
+    "commune": "Sanilhac-Sagriès",
+    "deptCode": "30",
+    "deptName": "Gard",
+    "region": "Occitanie"
+  },
+  "43.185,6.599": {
+    "commune": "La Croix-Valmer",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "42.508,-0.666": {
+    "commune": null
+  },
+  "42.112,-1.394": {
+    "commune": null
+  },
+  "42.219,-1.508": {
+    "commune": null
+  },
+  "42.214,-1.584": {
+    "commune": null
+  },
+  "45.139,6.093": {
+    "commune": "Oz",
+    "deptCode": "38",
+    "deptName": "Isère",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.079,5.784": {
+    "commune": "Six-Fours-les-Plages",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "43.214,5.541": {
+    "commune": "Cassis",
+    "deptCode": "13",
+    "deptName": "Bouches-du-Rhône",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "45.225,6.651": {
+    "commune": "Saint-André",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  "43.071,5.800": {
+    "commune": "Six-Fours-les-Plages",
+    "deptCode": "83",
+    "deptName": "Var",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  "45.230,6.673": {
+    "commune": "Villarodin-Bourget",
+    "deptCode": "73",
+    "deptName": "Savoie",
+    "region": "Auvergne-Rhône-Alpes"
+  }
+}

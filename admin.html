@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Administration | La Randothèque de Gérard &amp; Martine</title>
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/assets/style.css?v=8">
+  <link rel="stylesheet" href="/assets/admin.css?v=3">
+</head>
+<body class="admin">
+  <a class="skip-link" href="#liste">Aller à la liste des randos</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="/" aria-label="Voir le site public Historique des randos">
+        <img class="brand__logo" src="/assets/logo.svg" width="48" height="48" alt="">
+        <span class="brand__text">
+          <span class="brand__title">La Randothèque <span class="admin-badge">Admin</span></span>
+          <span class="brand__subtitle">de Gérard &amp; Martine</span>
+        </span>
+      </a>
+      <a class="header-link" href="/" target="_blank" rel="noopener">
+        <span>Voir<span class="hide-sm"> le site</span></span>
+        <svg class="icon" aria-hidden="true"><use href="#i-external"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+    <section class="admin-intro" aria-labelledby="admin-title">
+      <div>
+        <h1 id="admin-title" class="admin-title">Gérer les randos</h1>
+        <p class="admin-lead">Ajoutez des traces GPX, corrigez les informations affichées ou retirez une rando du site. Chaque changement est visible sur le site en quelques secondes.</p>
+      </div>
+      <p class="admin-notice">
+        <svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>
+        Cette page n'a pas de mot de passe : son adresse est la clé. Ne la partagez qu'avec les gestionnaires du site.
+      </p>
+    </section>
+
+    <div class="admin-grid">
+      <section class="panel admin-add" aria-labelledby="add-title">
+        <h2 class="panel__title" id="add-title">Ajouter des randos</h2>
+        <label class="dropzone" id="dropzone" for="file-input">
+          <svg class="dropzone__icon" aria-hidden="true"><use href="#i-upload"/></svg>
+          <span class="dropzone__title">Déposez vos fichiers GPX ici</span>
+          <span class="dropzone__text">ou <span class="dropzone__link">choisissez-les sur l'ordinateur</span> (plusieurs possibles)</span>
+          <input id="file-input" type="file" accept=".gpx,application/gpx+xml" multiple class="visually-hidden">
+        </label>
+        <ul class="upload-list" id="upload-list" aria-live="polite"></ul>
+      </section>
+
+      <section class="panel admin-sync" aria-labelledby="sync-title">
+        <h2 class="panel__title" id="sync-title">Blogs de Gé</h2>
+        <p class="admin-text">Récupère les nouvelles sorties publiées sur le blog et leurs fichiers GPX.</p>
+        <button type="button" class="btn btn--outline btn--block" id="sync-btn">
+          <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+          <span>Synchroniser avec le blog</span>
+        </button>
+        <p class="admin-text admin-text--small" id="sync-status" aria-live="polite"></p>
+        <details class="sync-log" id="sync-log-box" hidden>
+          <summary>Voir le détail</summary>
+          <pre id="sync-log"></pre>
+        </details>
+      </section>
+    </div>
+
+    <section class="admin-list" id="liste" aria-labelledby="list-title" tabindex="-1">
+      <div class="toolbar">
+        <h2 id="list-title" class="toolbar__count">Randos</h2>
+        <div class="toolbar__actions admin-filters">
+          <label class="admin-search">
+            <span class="visually-hidden">Rechercher une rando</span>
+            <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <input type="search" id="admin-q" placeholder="Rechercher…" autocomplete="off">
+          </label>
+          <div class="segmented" role="group" aria-label="Afficher">
+            <button type="button" class="segmented__btn" data-tab="visible" aria-pressed="true">En ligne <small data-tabcount="visible"></small></button>
+            <button type="button" class="segmented__btn" data-tab="edited" aria-pressed="false">Modifiées <small data-tabcount="edited"></small></button>
+            <button type="button" class="segmented__btn" data-tab="hidden" aria-pressed="false">Masquées <small data-tabcount="hidden"></small></button>
+            <button type="button" class="segmented__btn" data-tab="trash" aria-pressed="false">Corbeille <small data-tabcount="trash"></small></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="rtable" aria-describedby="list-title">
+          <thead>
+            <tr>
+              <th scope="col">Rando</th>
+              <th scope="col" class="num">Distance</th>
+              <th scope="col" class="num">D+</th>
+              <th scope="col">IBP</th>
+              <th scope="col">Itinéraire</th>
+              <th scope="col">Origine</th>
+              <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="rows"><tr><td colspan="7" class="rtable__empty">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="load-more" id="more-wrap" hidden>
+        <button type="button" class="btn btn--outline" id="more-btn">Afficher plus</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modifier -->
+  <dialog class="detail admin-dialog" id="edit-dialog" aria-labelledby="edit-title">
+    <form class="detail__inner" id="edit-form" method="dialog" novalidate>
+      <header class="detail__head">
+        <div class="detail__headings">
+          <h2 class="detail__title" id="edit-title">Modifier la rando</h2>
+          <p class="detail__sub" id="edit-sub"></p>
+        </div>
+        <button type="button" class="icon-btn" data-close aria-label="Fermer sans enregistrer">
+          <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </header>
+      <div class="admin-form" id="edit-fields"></div>
+      <footer class="admin-dialog__foot">
+        <p class="form-error" id="edit-error" role="alert" hidden></p>
+        <button type="button" class="btn btn--ghost" data-close>Annuler</button>
+        <button type="submit" class="btn btn--primary" id="edit-submit">Enregistrer les modifications</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Confirmation de suppression -->
+  <dialog class="detail admin-dialog admin-dialog--small" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+    <div class="detail__inner">
+      <div class="admin-confirm">
+        <h2 class="detail__title" id="confirm-title">Supprimer cette rando ?</h2>
+        <p class="admin-text" id="confirm-text"></p>
+      </div>
+      <footer class="admin-dialog__foot">
+        <button type="button" class="btn btn--ghost" data-close>Annuler</button>
+        <button type="button" class="btn btn--danger" id="confirm-ok">Supprimer</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 5h5v5m0-5-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V5m0 0-4 4m4-4 4 4M5 19h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3m-7 0 1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <script src="/assets/admin.js?v=1"></script>
+</body>
+</html>

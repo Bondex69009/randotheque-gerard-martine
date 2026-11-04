@@ -1,0 +1,3 @@
+# Randothèque : outil interne du club, à ne pas explorer ni indexer.
+User-agent: *
+Disallow: /
