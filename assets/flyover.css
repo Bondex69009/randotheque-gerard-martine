@@ -1,0 +1,142 @@
+/* Randothèque – Survol 3D (chargé à la demande avec MapLibre GL) */
+.fo {
+  position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none;
+  margin: 0; padding: 0; border: 0; background: var(--c-bg); color: var(--c-text); overflow: hidden;
+}
+.fo::backdrop { background: #000; }
+.fo__map { position: absolute; inset: 0; }
+.fo__map .maplibregl-ctrl-top-right { top: 5.25rem; }
+.fo__map .maplibregl-ctrl-group { background: color-mix(in srgb, var(--c-bg) 78%, transparent); border: 1px solid var(--c-border); }
+.fo__map .maplibregl-ctrl-group button + button { border-top-color: var(--c-border); }
+.fo__map .maplibregl-ctrl-icon { filter: invert(1); }
+.fo__map .maplibregl-ctrl-attrib { background: color-mix(in srgb, var(--c-bg) 60%, transparent); color: var(--c-text-faint); font-size: 10px; }
+.fo__map .maplibregl-ctrl-attrib a { color: var(--c-text-muted); }
+.fo__map .maplibregl-ctrl-bottom-right, .fo__map .maplibregl-ctrl-bottom-left { bottom: var(--fo-bottom-h, 11rem); }
+
+.fo__loading {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: var(--space-3);
+  background: var(--c-bg); color: var(--c-text-muted); font-size: var(--fs-sm); z-index: 3;
+}
+.fo__spinner {
+  width: 2.25rem; height: 2.25rem; border-radius: 50%;
+  border: 3px solid var(--c-border-strong); border-top-color: var(--c-accent);
+  animation: fo-spin 0.9s linear infinite;
+}
+@keyframes fo-spin { to { transform: rotate(360deg); } }
+
+.fo__card {
+  background: color-mix(in srgb, var(--c-bg) 74%, transparent); border: 1px solid rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg); box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.7);
+}
+.fo__top {
+  position: absolute; top: var(--space-3); left: var(--space-3); right: var(--space-3); z-index: 2;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); pointer-events: none;
+}
+.fo__top > * { pointer-events: auto; }
+.fo__title { padding: var(--space-2) var(--space-4); min-width: 0; max-width: min(34rem, 100%); }
+.fo__eyebrow { margin: 0; font-size: var(--fs-xs); font-weight: var(--fw-bold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent); }
+.fo__name { font-size: var(--fs-lg); font-weight: var(--fw-black); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fo__place { margin: 0; font-size: var(--fs-xs); color: var(--c-text-muted); }
+
+.fo__hud {
+  position: absolute; z-index: 2; left: var(--space-3); top: 5.75rem; margin: 0;
+  display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); min-width: 9.5rem;
+}
+.fo__hud div { display: grid; }
+.fo__hud dt { font-size: 0.6875rem; font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.08em; color: var(--c-text-faint); }
+.fo__hud dd { margin: 0; font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+.fo__hud b { font-size: var(--fs-xl); font-weight: 600; color: var(--c-text); }
+.fo__hud small { color: var(--c-text-muted); font-size: var(--fs-xs); }
+
+.fo__bottom {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: var(--space-3) var(--space-4) calc(var(--space-2) + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, color-mix(in srgb, var(--c-bg) 96%, transparent) 55%, color-mix(in srgb, var(--c-bg) 70%, transparent) 85%, color-mix(in srgb, var(--c-bg) 0%, transparent));
+}
+.fo__bar { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-2); }
+.fo__spacer { flex: 1; }
+.fo__btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  height: var(--tap); min-width: var(--tap); border-radius: var(--radius-pill); cursor: pointer;
+  border: 1px solid rgb(255 255 255 / 0.14); background: color-mix(in srgb, var(--c-bg) 74%, transparent); color: var(--c-text);
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.fo__btn:hover { border-color: var(--c-accent); }
+.fo__btn svg { width: 1.125rem; height: 1.125rem; flex: none; }
+.fo__btn--play { width: 3.25rem; height: 3.25rem; background: var(--c-accent); color: var(--c-on-accent); border-color: transparent; }
+.fo__btn--play:hover { background: var(--c-accent-hover); }
+.fo__btn--play svg { width: 1.375rem; height: 1.375rem; }
+.fo__btn--pill { padding-inline: var(--space-4); }
+.fo__speed { display: inline-flex; padding: 3px; gap: 2px; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--c-bg) 74%, transparent); border: 1px solid rgb(255 255 255 / 0.14); }
+.fo__chip {
+  min-width: 2.5rem; height: 2.25rem; border: 0; border-radius: var(--radius-pill); background: transparent;
+  color: var(--c-text-muted); font-size: var(--fs-xs); font-weight: var(--fw-bold); cursor: pointer;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+.fo__chip:hover { color: var(--c-text); }
+.fo__chip[aria-pressed="true"] { background: var(--c-surface-3); color: var(--c-accent); }
+
+.fo__profile { position: relative; height: 8.25rem; cursor: ew-resize; touch-action: none; border-radius: var(--radius-sm); }
+.fo__profile svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.fo-p-line { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linejoin: round; }
+.fo-p-grid { stroke: rgb(255 255 255 / 0.08); stroke-dasharray: 3 4; }
+.fo-p-base { stroke: rgb(255 255 255 / 0.35); }
+.fo-p-tick { stroke: rgb(255 255 255 / 0.35); }
+.fo-p-axis { fill: var(--c-text-faint); font: 600 10px "IBM Plex Mono", ui-monospace, monospace; }
+.fo-p-pct { fill: #fff; font: 700 10px "IBM Plex Sans", system-ui, sans-serif; paint-order: stroke; stroke: rgb(0 0 0 / 0.55); stroke-width: 2.5px; }
+.fo-p-alt { fill: #fff; font: 700 11px "IBM Plex Mono", ui-monospace, monospace; paint-order: stroke; stroke: var(--c-bg); stroke-width: 3px; }
+.fo-p-summit { fill: #fff; }
+.fo-p-mask { fill: color-mix(in srgb, var(--c-bg) 62%, transparent); }
+.fo-p-cur { stroke: var(--c-accent); stroke-width: 2; }
+.fo-p-dot { fill: var(--c-accent); stroke: var(--c-bg); stroke-width: 2.5; }
+.fo__profile:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 4px; }
+
+.fo__legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: var(--space-1) 0 0; padding: 0; list-style: none; font-size: 0.6875rem; color: var(--c-text-faint); }
+.fo__legend li { display: inline-flex; align-items: center; gap: 0.375rem; }
+.fo__legend i { width: 0.75rem; height: 0.5rem; border-radius: 2px; }
+
+/* Marqueurs sur la carte */
+.fo-borne {
+  width: 1.625rem; height: 2.125rem; display: grid; place-items: end center;
+  background: #f4f4f0; border-radius: 0.8rem 0.8rem 0.2rem 0.2rem; overflow: hidden;
+  box-shadow: 0 0 0 1.5px rgb(0 0 0 / 0.55), 0 6px 12px -4px rgb(0 0 0 / 0.8);
+  opacity: 0.55; transform-origin: 50% 100%; transform: scale(0.82);
+  transition: opacity 300ms var(--ease), transform 450ms cubic-bezier(.3, 1.6, .5, 1);
+}
+.fo-borne__cap { position: absolute; left: 0; right: 0; top: 0; height: 42%; background: #d62f2f; }
+.fo-borne__num { position: relative; padding-bottom: 0.2rem; color: #111; font: 800 0.75rem/1 "IBM Plex Sans", system-ui, sans-serif; }
+.fo-borne.is-on { opacity: 1; transform: scale(1.12); }
+
+.fo-flag {
+  display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+  font: 800 0.8125rem/1 var(--font-sans); color: var(--c-bg); box-shadow: 0 0 0 2px var(--c-bg), 0 6px 12px -4px rgb(0 0 0 / 0.8);
+}
+.fo-flag span { transform: rotate(45deg); }
+.fo-flag--start { background: var(--c-accent); }
+.fo-flag--end { background: var(--c-orange); }
+
+.fo-walker { width: 1.25rem; height: 1.25rem; pointer-events: none; }
+.fo-walker__dot { position: absolute; inset: 0; border-radius: 50%; background: var(--fo-c, var(--c-accent)); box-shadow: 0 0 0 3px #fff, 0 0 18px 4px var(--fo-c, var(--c-accent)); }
+.fo-walker__pulse { position: absolute; inset: -0.75rem; border-radius: 50%; background: var(--fo-c, var(--c-accent)); opacity: 0.35; animation: fo-pulse 1.6s ease-out infinite; }
+@keyframes fo-pulse { from { transform: scale(0.4); opacity: 0.55; } to { transform: scale(1.4); opacity: 0; } }
+
+@media (max-width: 640px) {
+  .fo__hud { top: auto; bottom: calc(var(--fo-bottom-h, 11rem) + var(--space-2)); left: var(--space-3); right: var(--space-3);
+    grid-template-columns: repeat(4, 1fr); padding: var(--space-2) var(--space-3); }
+  .fo__hud-time { display: none !important; }
+  .fo__hud b { font-size: var(--fs-md); }
+  .fo__hud dt { font-size: 0.5625rem; }
+  .fo__map .maplibregl-ctrl-top-right { top: 4.75rem; }
+  .fo__profile { height: 6.5rem; }
+  .fo__legend { display: none; }
+  .fo__btn--pill span { display: none; }
+  .fo__btn--pill { padding-inline: 0; width: var(--tap); }
+  .fo__bar { flex-wrap: nowrap; gap: 0.375rem; }
+  .fo__btn--play { width: var(--tap); height: var(--tap); }
+  .fo__chip { min-width: 2.125rem; padding: 0; }
+  .fo__of { display: none; }
+  .fo__name { font-size: var(--fs-md); }
+}

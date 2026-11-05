@@ -1271,6 +1271,7 @@
             ${kpi(r.loop ? 'loop' : 'arrow', 'Parcours', r.loop ? 'Boucle' : 'Aller simple', '', 'kpi--wide')}
           </div>
           <div class="actions">
+            <button type="button" class="btn btn--fly btn--block" data-fly="${r.id}" title="Rejoue la randonnée en survol 3D au-dessus du relief">${icon('play')}<span class="btn__label">Survol 3D animé</span><span class="btn__meta">relief + profil</span></button>
             <a class="btn btn--primary btn--block" href="${encodeURI(r.file)}" download="${esc(fileName)}">${icon('download')}Télécharger le GPX${r.fileSize ? ` <span class="btn__meta">(${fmtSize(r.fileSize)})</span>` : ''}</a>
             ${accessButton(r)}
             ${albumButtons(r)}
@@ -1393,6 +1394,44 @@
       if (p) { cursorMarker.setLatLng([p[0], p[1]]); if (!detailMap.hasLayer(cursorMarker)) cursorMarker.addTo(detailMap); }
       else if (detailMap.hasLayer(cursorMarker)) cursorMarker.remove();
     });
+  }
+
+  // ------------------------------------------------------------ Survol 3D (MapLibre GL chargé à la demande)
+  const ML_VER = '4.7.1';
+  const loadOnce = new Map();
+  const loadAsset = (url, css) => {
+    if (!loadOnce.has(url)) loadOnce.set(url, new Promise((resolve, reject) => {
+      const el = document.createElement(css ? 'link' : 'script');
+      if (css) { el.rel = 'stylesheet'; el.href = url; } else { el.src = url; }
+      el.onload = resolve;
+      el.onerror = () => { loadOnce.delete(url); el.remove(); reject(new Error(`chargement impossible : ${url}`)); };
+      document.head.appendChild(el);
+    }));
+    return loadOnce.get(url);
+  };
+  async function openFlyover(id, btn) {
+    const r = byId.get(id);
+    if (!r) return;
+    const label = btn && $('.btn__label', btn);
+    if (btn) { btn.disabled = true; if (label) label.textContent = 'Chargement…'; }
+    try {
+      await Promise.all([
+        loadAsset(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.css`, true),
+        loadAsset('assets/flyover.css?v=5', true),
+        loadAsset(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`).then(() => loadAsset('assets/flyover.js?v=5')),
+      ]);
+      const track = await loadTrack(id);
+      stopAudio();
+      window.RTFlyover.open({
+        track, title: r.name, place: [r.commune, r.deptName].filter(Boolean).join(', '),
+        color: r.level === 'noir' ? '#f4f4f0' : levelColor(r.level), inFrance: !!r.region,
+        loop: r.loop, dplus: r.dplus, durationMin: r.durationMin,
+      });
+    } catch (e) {
+      alert('Le survol 3D n\'a pas pu se charger. Vérifiez la connexion internet puis réessayez.');
+    } finally {
+      if (btn) { btn.disabled = false; if (label) label.textContent = 'Survol 3D animé'; }
+    }
   }
 
   function closeDetail() {
@@ -1651,6 +1690,8 @@
   document.addEventListener('click', (e) => { if (e.target.closest('[data-action="reset"]')) resetAll(); });
 
   document.addEventListener('click', (e) => {
+    const fly = e.target.closest('[data-fly]');
+    if (fly) { openFlyover(fly.dataset.fly, fly); return; }
     const png = e.target.closest('[data-png]');
     if (png) { exportPng(byId.get(png.dataset.png), png); return; }
     const ibp = e.target.closest('[data-ibp]');
