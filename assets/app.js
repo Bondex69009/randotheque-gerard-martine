@@ -480,6 +480,9 @@
   function scheduleUpdate() { cancelAnimationFrame(rafId); rafId = requestAnimationFrame(update); }
 
   function update() {
+    // Recherche « Ailleurs sur le web » (assets/ailleurs.js) : on lui passe seulement le texte
+    // cherché et les communes choisies ; ses résultats ne touchent jamais aux randos du club.
+    document.dispatchEvent(new CustomEvent('randos:search', { detail: { q: state.q, communes: [...state.communes] } }));
     filtered = RANDOS.filter((r) => matches(r)).sort(SORTS[state.sort] || SORTS['date-desc']);
     const n = filtered.length;
     $('#results-title').innerHTML = `<span>${n}</span> rando${n > 1 ? 's' : ''}${n !== RANDOS.length ? ` sur ${RANDOS.length}` : ''}`;
@@ -1664,41 +1667,9 @@
     if (opt && +opt.dataset.i !== activeIdx) setActive(+opt.dataset.i);
   });
 
-  // ------------------------------------------------------------ Recherche sur d'autres sites
-  // Pour ajouter un site : une ligne de plus ici. `search(terme)` renvoie l'adresse de la recherche.
-  const OTHER_SITES = [
-    { name: 'Visorando', home: 'https://www.visorando.com/',
-      search: (t) => `https://www.google.com/search?q=${encodeURIComponent(`site:visorando.com ${t}`)}` },
-    { name: 'RandoGPS', home: 'https://www.randogps.net/',
-      search: (t) => `https://www.google.com/search?q=${encodeURIComponent(`site:randogps.net ${t}`)}` },
-    { name: 'Poulx Rando Pédestre', home: 'https://poulxrandopedestre.blogspot.com/',
-      search: (t) => `https://poulxrandopedestre.blogspot.com/search?q=${encodeURIComponent(t)}` },
-  ];
-  const elsewhereList = $('#elsewhere-list');
-  // Met à jour l'adresse de chaque lien avec le texte de la barre de recherche.
-  const renderElsewhere = () => {
-    if (!elsewhereList) return;
-    const t = $('#q').value.trim();
-    elsewhereList.querySelectorAll('a[data-i]').forEach((a) => {
-      const s = OTHER_SITES[+a.dataset.i];
-      a.href = t ? s.search(t) : s.home;
-      a.title = t ? `Chercher « ${t} » sur ${s.name} (nouvel onglet)` : `Ouvrir ${s.name} (nouvel onglet)`;
-    });
-  };
-  if (elsewhereList) {
-    elsewhereList.innerHTML = OTHER_SITES.map((s, i) =>
-      `<li><a class="elsewhere__link" data-i="${i}" href="${esc(s.home)}" target="_blank" rel="noopener">${esc(s.name)}<svg class="icon" aria-hidden="true"><use href="#i-external"/></svg></a></li>`).join('');
-    // La barre peut aussi être remplie par le code (suggestion, animateur, lien partagé) :
-    // on relit sa valeur juste avant le clic.
-    elsewhereList.addEventListener('pointerdown', renderElsewhere);
-    elsewhereList.addEventListener('focusin', renderElsewhere);
-    renderElsewhere();
-  }
-
   // ------------------------------------------------------------ Événements
   let qTimer;
   $('#q').addEventListener('input', (e) => {
-    renderElsewhere();
     clearTimeout(qTimer);
     qTimer = setTimeout(() => { state.q = e.target.value.trim(); update(); }, 120);
     renderSuggest();

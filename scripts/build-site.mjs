@@ -32,6 +32,8 @@ copy('robots.txt', 'robots.txt');
 copy('assets', 'assets', (src) => noHidden(src) && !/[\\/]admin\.(css|js)$/.test(src));
 copy('data/randos.js', 'data/randos.js');
 copy('data/tracks', 'data/tracks');
+// Randos RandoGPS pour « Chercher aussi sur » (hors club ; absent si la récupération a échoué)
+if (fs.existsSync(path.join(ROOT, 'data', 'randogps.json'))) copy('data/randogps.json', 'data/randogps.json');
 copy('gpx', 'gpx');
 if (fs.existsSync(path.join(ROOT, 'audio'))) copy('audio', 'audio');
 // Pas de traitement Jekyll par GitHub Pages

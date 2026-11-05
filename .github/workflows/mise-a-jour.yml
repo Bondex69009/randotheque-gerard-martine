@@ -57,6 +57,10 @@ jobs:
             done
           fi
 
+      - name: Récupérer la liste des randos RandoGPS (recherche « Chercher aussi sur », hors club)
+        run: node scripts/scrape-randogps.mjs
+        continue-on-error: true
+
       - name: Préparer le site
         run: node scripts/build-site.mjs
 

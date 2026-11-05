@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="">
-  <link rel="stylesheet" href="assets/style.css?v=31">
+  <link rel="stylesheet" href="assets/style.css?v=32">
 </head>
 <body>
   <a class="skip-link" href="#resultats">Aller aux résultats</a>
@@ -60,10 +60,13 @@
           <span class="visually-hidden" id="q-help">Des suggestions s'affichent pendant la saisie : flèches haut et bas pour les parcourir, Entrée pour choisir, Tab pour compléter le mot.</span>
           <div class="suggest" id="q-suggest" role="listbox" aria-label="Suggestions" hidden></div>
         </form>
-        <nav class="elsewhere" id="elsewhere" aria-labelledby="elsewhere-label">
-          <span class="elsewhere__label" id="elsewhere-label">Chercher aussi sur</span>
-          <ul class="elsewhere__list" id="elsewhere-list"><!-- généré par app.js --></ul>
-        </nav>
+        <section class="elsewhere" id="elsewhere" aria-labelledby="elsewhere-label">
+          <div class="elsewhere__bar">
+            <span class="elsewhere__label" id="elsewhere-label">Chercher aussi sur</span>
+            <div class="elsewhere__tabs" id="elsewhere-tabs"><!-- généré par ailleurs.js --></div>
+          </div>
+          <div class="elsewhere__panel" id="elsewhere-panel" hidden></div>
+        </section>
         <div class="hero__figures">
           <p class="hero-total" id="hero-total"></p>
           <div class="hero__stats-wrap">
@@ -250,6 +253,7 @@
   <script src="data/randos.js" onerror="window.RANDOTHEQUE=null"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
-  <script src="assets/app.js?v=37"></script>
+  <script src="assets/ailleurs.js?v=1"></script>
+  <script src="assets/app.js?v=38"></script>
 </body>
 </html>
