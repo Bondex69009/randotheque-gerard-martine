@@ -18,6 +18,10 @@
   const LEVELS = DATA.levels;
   const LEVEL_BY_ID = Object.fromEntries(LEVELS.map((l) => [l.id, l]));
   const byId = new Map(RANDOS.map((r) => [r.id, r]));
+  // Randos d'autres sites ouvertes depuis « Chercher aussi sur » (assets/ailleurs.js) : rangées à part,
+  // elles n'entrent jamais dans RANDOS, les filtres, les chiffres ni le compteur.
+  const extById = new Map();
+  const getR = (id) => byId.get(id) || extById.get(id);
   const css = getComputedStyle(document.documentElement);
   const cssVar = (n) => css.getPropertyValue(n).trim();
 
@@ -109,7 +113,7 @@
     }
     if (state.sort !== 'date-desc') p.set('sort', state.sort);
     if (state.view !== 'grid') p.set('view', state.view);
-    if (openId) p.set('rando', openId);
+    if (openId && byId.has(openId)) p.set('rando', openId);
     const h = p.toString();
     history.replaceState(null, '', h ? `#${h}` : location.pathname + location.search);
   }
@@ -836,7 +840,7 @@
       if (!trackWaiters.has(id)) {
         trackWaiters.set(id, []);
         const s = document.createElement('script');
-        s.src = `data/tracks/${id}.js`;
+        s.src = extById.get(id)?.trackUrl || `data/tracks/${id}.js`;
         s.onerror = () => { trackWaiters.delete(id); reject(new Error('trace introuvable')); };
         document.head.appendChild(s);
       }
@@ -1301,6 +1305,65 @@
       </div>`;
   }
 
+  // Fiche d'une rando trouvée sur un autre site (Poulx, Visorando, RandoGPS) : mêmes outils
+  // (carte, profil, survol 3D) quand on a la trace, sinon les infos publiées et le lien vers le site.
+  function detailExtHtml(r) {
+    const hasTrack = !!r.trackUrl;
+    const place = [r.commune, r.deptName].filter(Boolean).join(', ');
+    const lvlName = { vert: 'Vert', bleu: 'Bleu', jaune: 'Jaune', rouge: 'Rouge', noir: 'Noir' };
+    const route = r.start ? `<a class="btn btn--route btn--block" href="https://www.google.com/maps/dir/?api=1&destination=${r.start[0]},${r.start[1]}&travelmode=driving" target="_blank" rel="noopener" title="Ouvre Google Maps jusqu'au point de départ">
+      ${icon('pin')}<span class="btn__label">Itinéraire vers le départ</span><span class="btn__meta">Google Maps</span>${icon('external', 'icon btn__ext')}</a>` : '';
+    const link = (href, label, ic = 'external') => (href ? `<a class="btn btn--outline btn--block" href="${esc(href)}" target="_blank" rel="noopener">${icon(ic)}${label}</a>` : '');
+    return `
+      <header class="detail__head">
+        <div class="detail__headings">
+          <p class="detail__ext">${icon('external')}Rando externe · ${esc(r.sourceName)}</p>
+          <h2 class="detail__title" id="detail-title">${esc(r.name)}</h2>
+          <p class="detail__sub">
+            ${place ? `<span>${icon('pin')}${esc(place)}</span>` : ''}
+            ${r.date ? `<span>${icon('calendar')}${fmtDate(r.date)}</span>` : ''}
+            ${r.animateurs ? `<span>${icon('user')}${esc(r.animateurs)}</span>` : ''}
+          </p>
+        </div>
+        <button type="button" class="icon-btn" data-close aria-label="Fermer la fiche">${icon('close')}</button>
+      </header>
+      <p class="detail__ext-note">Rando publiée sur ${esc(r.sourceName)}, elle ne fait pas partie de nos randos et ne compte dans aucun chiffre de la randothèque.</p>
+      <div class="detail__body">
+        <div class="detail__main">
+          ${hasTrack || r.start ? `<div class="detail__map" id="detail-map" role="region" aria-label="Carte du parcours"></div>` : ''}
+          ${hasTrack ? `<section class="panel" aria-labelledby="profile-title">
+            <h3 class="panel__title" id="profile-title">Profil altimétrique</h3>
+            <div class="profile" id="profile"><div class="state" style="padding:var(--space-8)">Chargement du profil…</div></div>
+          </section>` : `<section class="panel"><h3 class="panel__title">Trace GPS</h3>
+            <p class="desc">${esc(r.sourceName)} ne partage pas la trace librement${r.gpxNote ? ` : ${esc(r.gpxNote)}` : ''}. La carte, le profil et le survol 3D ne sont donc pas disponibles ici.</p></section>`}
+          ${r.departText ? `<section class="panel"><h3 class="panel__title">Départ</h3><p class="desc">${esc(r.departText)}</p></section>` : ''}
+        </div>
+        <aside class="detail__side">
+          <div class="kpis">
+            ${r.levelText || r.level ? kpi('gauge', r.levelTitle || 'Niveau', `${esc(r.levelText || lvlName[r.level] || '')}${r.level ? ` <span class="lvl-dot" aria-hidden="true" style="background:var(--c-lvl-${r.level})"></span>` : ''}`, '', 'kpi--wide') : ''}
+            ${r.distanceKm ? kpi('distance', 'Distance', fmtKm(r.distanceKm)) : ''}
+            ${r.durationMin ? kpi('clock', r.durationText ? 'Durée' : 'Temps estimé', r.durationText ? esc(r.durationText) : fmtDur(r.durationMin), r.durationText ? `Selon ${esc(r.sourceName)}` : 'Hors pauses') : ''}
+            ${r.dplus != null ? kpi('up', 'Dénivelé +', fmtM(r.dplus)) : ''}
+            ${r.dminus != null ? kpi('down', 'Dénivelé −', fmtM(r.dminus)) : ''}
+            ${r.altMax != null ? kpi('up', 'Altitude max', fmtM(r.altMax)) : ''}
+            ${r.altMin != null ? kpi('down', 'Altitude min', fmtM(r.altMin)) : ''}
+            ${hasTrack ? kpi(r.loop ? 'loop' : 'arrow', 'Parcours', r.loop ? 'Boucle' : 'Aller simple', '', 'kpi--wide') : ''}
+          </div>
+          <div class="actions">
+            ${hasTrack ? `<button type="button" class="btn btn--fly btn--block" data-fly="${r.id}" title="Rejoue la randonnée en survol 3D au-dessus du relief">${icon('play')}<span class="btn__label">Survol 3D animé</span><span class="btn__meta">relief + profil</span></button>` : ''}
+            ${r.gpxUrl ? `<a class="btn btn--primary btn--block" href="${esc(r.gpxUrl)}" target="_blank" rel="noopener">${icon('download')}${esc(r.gpxLabel || 'Fichier GPX')}${icon('external', 'icon btn__ext')}</a>` : ''}
+            ${route}
+            ${r.photos ? `<a class="btn btn--photos btn--block" href="${esc(r.photos)}" target="_blank" rel="noopener">${icon('image')}<span class="btn__label">Photos de la sortie</span>${icon('external', 'icon btn__ext')}</a>` : ''}
+            ${link(r.relive, 'Vidéo Relive du parcours', 'play')}
+            ${r.gpxUrl === r.url ? '' : link(r.url, `Voir sur ${esc(r.sourceName)}`)}
+          </div>
+          ${r.image ? `<section class="panel"><a class="photo photo--link" href="${esc(r.url)}" target="_blank" rel="noopener" title="Voir sur ${esc(r.sourceName)} (nouvel onglet)">
+              <img src="${esc(r.image)}" alt="Photo : ${esc(r.name)}" loading="lazy" width="640" height="360">
+              <span class="photo__cta" aria-hidden="true">${icon('external')}Voir sur ${esc(r.sourceName)}</span></a></section>` : ''}
+        </aside>
+      </div>`;
+  }
+
   function renderProfile(track, onHover) {
     const box = $('#profile');
     const pts = track.filter((p) => p[2] != null);
@@ -1351,12 +1414,12 @@
   }
 
   async function openDetail(id, { push = true } = {}) {
-    const r = byId.get(id);
+    const r = getR(id);
     if (!r) return;
     openId = id;
     if (push) writeHash();
     stopAudio();
-    $('#detail-content').innerHTML = detailHtml(r);
+    $('#detail-content').innerHTML = r.external ? detailExtHtml(r) : detailHtml(r);
     setupPlayers($('#detail-content'), r);
     if (!dialog.open) dialog.showModal();
     $('#detail-content').scrollTop = 0;
@@ -1365,6 +1428,18 @@
 
     const mapEl = $('#detail-map');
     if (detailMap) { detailMap.remove(); detailMap = null; }
+    // Rando externe sans trace (Visorando, RandoGPS) : seulement le point de départ, s'il est connu
+    if (r.external && !r.trackUrl) {
+      if (!mapEl) return;
+      if (!hasLeaflet()) { mapUnavailable(mapEl); return; }
+      detailMap = L.map(mapEl, { scrollWheelZoom: false });
+      baseLayers()['Plan IGN'].addTo(detailMap);
+      L.control.layers(baseLayers(), null, { position: 'topright' }).addTo(detailMap);
+      L.marker(r.start, { icon: L.divIcon({ className: '', html: '<div class="pin-start" title="Départ">D</div>', iconSize: [28, 28] }) }).addTo(detailMap);
+      detailMap.setView(r.start, 13);
+      setTimeout(() => detailMap && detailMap.invalidateSize(), 60);
+      return;
+    }
     let track;
     try { track = await loadTrack(id); } catch {
       $('#profile').innerHTML = '<p class="desc">Trace introuvable. Relancez « npm run build ».</p>';
@@ -1413,7 +1488,7 @@
     return loadOnce.get(url);
   };
   async function openFlyover(id, btn) {
-    const r = byId.get(id);
+    const r = getR(id);
     if (!r) return;
     const label = btn && $('.btn__label', btn);
     if (btn) { btn.disabled = true; if (label) label.textContent = 'Chargement…'; }
@@ -1715,7 +1790,8 @@
     readHash();
     syncFilterInputs();
     update();
-    if (openId) openDetail(openId, { push: false }); else closeDetail();
+    if (openId && byId.has(openId)) openDetail(openId, { push: false });
+    else if (!(openId && extById.has(openId))) closeDetail();
   });
 
   // ------------------------------------------------------------ Démarrage
@@ -1728,4 +1804,12 @@
   renderHeroStats();
   update();
   if (openId) openDetail(openId, { push: false });
+
+  // Ouverture d'une fiche externe par assets/ailleurs.js
+  window.RTExternal = {
+    open(r) {
+      extById.set(r.id, { ...r, external: true, animateursList: [] });
+      openDetail(r.id, { push: false });
+    },
+  };
 })();

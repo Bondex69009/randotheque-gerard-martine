@@ -10,6 +10,7 @@
   "scripts": {
     "blog": "node scripts/scrape-blog.mjs",
     "randogps": "node scripts/scrape-randogps.mjs",
+    "poulx": "node scripts/scrape-poulx.mjs",
     "build": "node scripts/build.mjs",
     "update": "node scripts/scrape-blog.mjs && node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",

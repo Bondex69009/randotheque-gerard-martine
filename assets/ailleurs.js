@@ -18,6 +18,38 @@
   const plus = (n) => (n ? `+${Math.round(n)} m` : '');
   const MAX = 30;
 
+  // Fiche d'une rando Visorando : on lit sa page publique (fiche technique, point de départ).
+  // La trace GPS n'est téléchargeable qu'avec un compte Visorando : on ne la récupère pas.
+  async function visorandoFiche(url, title) {
+    const res = await fetch(url, { credentials: 'omit' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+    // Fiche technique : <div class="vr-walk-datasheet--dataset"><strong>Distance :</strong> 14,45 km</div>
+    const sheet = {};
+    for (const el of doc.querySelectorAll('.vr-walk-datasheet--dataset')) {
+      const label = el.querySelector('strong')?.textContent.replace(/[\s\u00a0]*:[\s\u00a0]*$/, '').trim();
+      if (label && !(label in sheet)) sheet[label] = el.textContent.replace(el.querySelector('strong').textContent, '').replace(/\s+/g, ' ').trim();
+    }
+    const num = (s) => { const n = parseFloat(String(s || '').replace(/[\s\u00a0\u2009]/g, '').replace(',', '.').replace(/[^\d.-]/g, '')); return Number.isFinite(n) ? n : null; };
+    const lat = num(doc.querySelector('meta[property="og:latitude"]')?.content);
+    const lon = num(doc.querySelector('meta[property="og:longitude"]')?.content);
+    const start = lat != null && lon != null ? [lat, lon] : null;
+    const diff = sheet['Difficulté'] || '';
+    const LEVEL = { 'tres facile': 'vert', facile: 'bleu', moyenne: 'jaune', difficile: 'rouge' };
+    const dur = Object.entries(sheet).find(([k]) => /^Durée/.test(k))?.[1] || '';
+    const h = dur.match(/(\d+)\s*h\s*(\d+)?/);
+    return {
+      id: `vr-${slug(url)}`, sourceName: 'Visorando', name: doc.querySelector('h1')?.textContent.trim() || title, url,
+      commune: (sheet.Commune || '').replace(/\s*\(.*$/, '') || null,
+      distanceKm: num(sheet.Distance), dplus: num(sheet['Dénivelé positif']), dminus: num(sheet['Dénivelé négatif']) == null ? null : Math.abs(num(sheet['Dénivelé négatif'])),
+      altMax: num(sheet['Point haut']), altMin: num(sheet['Point bas']),
+      durationMin: h ? (+h[1]) * 60 + (+h[2] || 0) : null, durationText: h ? dur : '',
+      level: LEVEL[norm(diff)] || null, levelTitle: 'Difficulté', levelText: diff && !/non renseign/i.test(diff) ? diff : '',
+      start, image: doc.querySelector('meta[property="og:image"]')?.content || null,
+      gpxUrl: url, gpxLabel: 'GPX sur Visorando (avec un compte)', gpxNote: 'le GPX est réservé aux membres inscrits',
+    };
+  }
+
   // ---------------------------------------------------------------- Sources
   // Chaque source : search(terme) → Promise<{ items: [{ title, url, meta: [] , sub }], more }>
   // « more » = adresse où voir la recherche complète sur le site.
@@ -42,6 +74,7 @@
               url: a.href,
               meta: [tag('Distance'), tag('Dénivelé positif'), tag('Durée'), lvl].filter(Boolean),
               sub: start,
+              fiche: () => visorandoFiche(a.href, a.getAttribute('title') || a.textContent.trim()),
             };
           }).filter(Boolean);
           if (items.length) return { items, more: page };
@@ -56,7 +89,8 @@
           .filter((a) => a.closest('li') && want.every((w) => norm(a.textContent).includes(w)))
           .map((a) => {
             const info = a.closest('li').querySelector('span')?.textContent.replace(/\s+/g, ' ').trim() || '';
-            return { title: a.textContent.trim(), url: a.href, meta: [info.split('•').pop().trim()].filter(Boolean) };
+            return { title: a.textContent.trim(), url: a.href, meta: [info.split('•').pop().trim()].filter(Boolean),
+              fiche: () => visorandoFiche(a.href, a.textContent.trim()) };
           });
         return { items, more };
       },
@@ -86,48 +120,56 @@
             url: `https://www.randogps.net/randonnee-pedestre-gps-${pages[r.d]}.php?num=${r.i}&meta=${encodeURIComponent(r.n)}`,
             meta: [km(r.km), plus(r.dp), DEPS[r.d] || ''].filter(Boolean),
             sub: r.dep ? `Départ : ${r.dep}` : '',
+            fiche: async () => ({
+              id: `rg-${r.d}-${r.i}`, sourceName: 'RandoGPS', name: r.n.charAt(0) + r.n.slice(1).toLowerCase(),
+              url: `https://www.randogps.net/randonnee-pedestre-gps-${pages[r.d]}.php?num=${r.i}&meta=${encodeURIComponent(r.n)}`,
+              deptName: DEPS[r.d] || null, distanceKm: r.km, dplus: r.dp ?? null,
+              durationMin: r.km ? Math.round((r.km / 4 + (r.dp || 0) / 300) * 60) : null,
+              departText: r.dep || '', gpxNote: 'le GPX est réservé aux membres du site',
+            }),
           }));
         return { items, more: 'https://www.randogps.net/cherche/search-commune.php' };
       },
     },
     {
       id: 'poulx', name: 'Poulx Rando Pédestre', home: 'https://poulxrandopedestre.blogspot.com/',
-      // Blog Blogger : son flux de recherche officiel, lu en « JSONP » (balise script).
-      search(t) {
-        const term = norm(t);
+      // Articles du blog et traces GPX récupérés à chaque mise à jour du site (scripts/scrape-poulx.mjs)
+      data: null,
+      async search(t) {
+        if (!this.data) {
+          const res = await fetch('externes/poulx/poulx.json', { cache: 'no-cache' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          this.data = await res.json();
+          for (const r of this.data.items) r._n = ` ${norm(`${r.place} ${r.commune || ''} ${r.animateurs || ''}`).replace(/[^a-z0-9]+/g, ' ')}`;
+        }
+        const want = words(t);
         const more = `https://poulxrandopedestre.blogspot.com/search?q=${encodeURIComponent(t)}`;
-        return new Promise((resolve, reject) => {
-          const cb = `__poulx_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-          const s = document.createElement('script');
-          const done = () => { delete window[cb]; s.remove(); clearTimeout(timer); };
-          const timer = setTimeout(() => { done(); reject(new Error('délai dépassé')); }, 12000);
-          window[cb] = (json) => {
-            done();
-            const entries = json?.feed?.entry || [];
-            resolve({ more, items: entries.map((e) => {
-              const link = (e.link || []).find((l) => l.rel === 'alternate')?.href;
-              const tmp = document.createElement('div');
-              tmp.innerHTML = (e.summary?.$t || '').replace(/<[^>]*>/g, ' ');
-              const text = tmp.textContent.replace(/\s+/g, ' ').trim();
-              // Résumé du type « UZES 8km +190m Animateur : Sergio Nous sommes passés par là… »
-              const m = text.match(/^(.*?)(\d+(?:[.,]\d+)?)\s*km/i);
-              const place = m ? m[1].trim() : '';
-              const dist = m ? parseFloat(m[2].replace(',', '.')) : null;
-              const dp = text.match(/\+\s*(\d+)\s*m/i)?.[1];
-              const anim = text.match(/Animat(?:eur|rice)s?\s*:?\s*(.+?)(?=\s*(?:Nous sommes|Indice|Format|Toutes les|$))/i)?.[1];
-              const date = (e.published?.$t || '').slice(0, 10);
-              return {
-                title: place ? place.charAt(0) + place.slice(1).toLowerCase() : (e.title?.$t || 'Rando'),
-                url: link,
-                meta: [km(dist), plus(dp), date ? new Date(`${date}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : ''].filter(Boolean),
-                sub: anim ? `Animée par ${anim.trim()}` : '',
-              };
-            }).filter((it) => it.url) });
+        if (!want.length) return { items: [], more };
+        const FFR = { vert: 'vert', bleu: 'bleu', jaune: 'jaune', orange: 'jaune', rouge: 'rouge', noir: 'noir' };
+        const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '');
+        const items = this.data.items.filter((r) => want.every((w) => r._n.includes(` ${w}`))).map((r) => {
+          const name = cap(r.place) || r.commune || 'Rando';
+          const date = r.date ? new Date(`${r.date}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+          return {
+            title: r.part ? `${name} (trace ${r.part})` : name,
+            url: r.url,
+            meta: [km(r.km), plus(r.dplus), date].filter(Boolean),
+            sub: [r.id ? 'Trace, profil et survol 3D' : '', r.animateurs ? `Animée par ${r.animateurs}` : ''].filter(Boolean).join(' · '),
+            fiche: async () => ({
+              id: r.id || `px-${this.data.items.indexOf(r)}`,
+              sourceName: 'Poulx Rando Pédestre', name: r.part ? `${name} (trace ${r.part})` : name,
+              url: r.url, date: r.date, animateurs: r.animateurs, image: r.image, photos: r.photos, relive: r.relive,
+              commune: r.commune, deptName: r.deptName, region: r.deptCode ? 'France' : null,
+              trackUrl: r.id ? `externes/poulx/tracks/${r.id}.js` : null,
+              distanceKm: r.km, dplus: r.dplus, dminus: r.dminus ?? null, altMin: r.altMin ?? null, altMax: r.altMax ?? null,
+              durationMin: r.durationMin || null, loop: r.loop, start: r.start || null,
+              level: FFR[r.ffr] || null, levelTitle: 'Indice FFR', levelText: r.ffr ? cap(r.ffr) : '',
+              gpxUrl: r.gpx, gpxLabel: 'GPX sur le Drive du blog',
+              gpxNote: r.gpx ? 'trace pas encore récupérée par la randothèque' : 'pas de GPX dans cet article',
+            }),
           };
-          s.src = `https://poulxrandopedestre.blogspot.com/feeds/posts/summary?alt=json-in-script&max-results=${MAX}&q=${encodeURIComponent(term)}&callback=${cb}`;
-          s.onerror = () => { done(); reject(new Error('blog injoignable')); };
-          document.head.appendChild(s);
         });
+        return { items, more };
       },
     },
   ];
@@ -185,12 +227,12 @@
       return;
     }
     const { items, more } = r.data;
-    const list = items.slice(0, MAX).map((it) => `<li>
-        <a class="elsewhere__item" href="${esc(it.url)}" target="_blank" rel="noopener">
-          <span class="elsewhere__title">${esc(it.title)}<svg class="icon" aria-hidden="true"><use href="#i-external"/></svg></span>
+    const list = items.slice(0, MAX).map((it, i) => `<li>
+        <button type="button" class="elsewhere__item" data-fiche="${i}" title="Ouvrir la fiche dans la randothèque">
+          <span class="elsewhere__title">${esc(it.title)}</span>
           ${it.meta?.length ? `<span class="elsewhere__meta">${it.meta.map(esc).join(' · ')}</span>` : ''}
           ${it.sub ? `<span class="elsewhere__sub">${esc(it.sub)}</span>` : ''}
-        </a></li>`).join('');
+        </button></li>`).join('');
     panel.innerHTML = `${head}${items.length
       ? `<ul class="elsewhere__results" role="list">${list}</ul>`
       : `<p class="elsewhere__msg" role="status">Aucune rando trouvée sur ${esc(src.name)} pour « ${esc(term)} ».</p>`}
@@ -206,8 +248,22 @@
     active = active === b.dataset.src ? null : b.dataset.src;
     if (active) searchAll(); else render();
   });
-  panel.addEventListener('click', (e) => {
-    if (e.target.closest('[data-close]')) { active = null; render(); tabsBox.querySelector('[data-src]')?.focus(); }
+  panel.addEventListener('click', async (e) => {
+    if (e.target.closest('[data-close]')) { active = null; render(); tabsBox.querySelector('[data-src]')?.focus(); return; }
+    const btn = e.target.closest('[data-fiche]');
+    const r = btn && results[active];
+    const it = r?.status === 'ok' ? r.data.items[+btn.dataset.fiche] : null;
+    if (!it) return;
+    // Sans fiche possible (ou si la page n'est pas prête), on ouvre la rando sur son site
+    if (!it.fiche || !window.RTExternal) { window.open(it.url, '_blank', 'noopener'); return; }
+    btn.setAttribute('aria-busy', 'true');
+    try {
+      window.RTExternal.open(await it.fiche());
+    } catch {
+      window.open(it.url, '_blank', 'noopener');
+    } finally {
+      btn.removeAttribute('aria-busy');
+    }
   });
 
   let timer;

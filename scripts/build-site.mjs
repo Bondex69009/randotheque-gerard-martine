@@ -34,6 +34,11 @@ copy('data/randos.js', 'data/randos.js');
 copy('data/tracks', 'data/tracks');
 // Randos RandoGPS pour « Chercher aussi sur » (hors club ; absent si la récupération a échoué)
 if (fs.existsSync(path.join(ROOT, 'data', 'randogps.json'))) copy('data/randogps.json', 'data/randogps.json');
+// Randos du blog Poulx (hors club) : liste et traces simplifiées, sans le suivi interne
+if (fs.existsSync(path.join(ROOT, 'externes', 'poulx', 'poulx.json'))) {
+  copy('externes/poulx/poulx.json', 'externes/poulx/poulx.json');
+  copy('externes/poulx/tracks', 'externes/poulx/tracks');
+}
 copy('gpx', 'gpx');
 if (fs.existsSync(path.join(ROOT, 'audio'))) copy('audio', 'audio');
 // Pas de traitement Jekyll par GitHub Pages

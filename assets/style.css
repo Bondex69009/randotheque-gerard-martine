@@ -309,9 +309,11 @@ h1, h2, h3 { line-height: var(--lh-tight); margin: 0; }
 }
 .elsewhere__results li + li { border-top: var(--border-w) solid var(--c-border); }
 .elsewhere__item {
-  display: flex; flex-direction: column; gap: 2px; padding: var(--space-2) var(--space-2);
+  display: flex; flex-direction: column; gap: 2px; width: 100%; padding: var(--space-2) var(--space-2);
+  border: 0; background: none; font: inherit; text-align: left; cursor: pointer;
   color: var(--c-text); text-decoration: none; border-radius: var(--radius-sm);
 }
+.elsewhere__item[aria-busy="true"] { opacity: 0.6; cursor: progress; }
 .elsewhere__item:hover { background: var(--c-surface); }
 .elsewhere__item:hover .elsewhere__title { color: var(--c-accent); }
 .elsewhere__item:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -2px; }
@@ -319,6 +321,20 @@ h1, h2, h3 { line-height: var(--lh-tight); margin: 0; }
 .elsewhere__title .icon, .elsewhere__more .icon { flex: none; width: 0.8rem; height: 0.8rem; color: var(--c-text-muted); }
 .elsewhere__meta { font-size: var(--fs-sm); color: var(--c-text-muted); font-variant-numeric: tabular-nums; }
 .elsewhere__sub { font-size: var(--fs-xs); color: var(--c-text-faint); }
+/* Fiche d'une rando externe (même fenêtre que les fiches du club) */
+.lvl-dot { display: inline-block; width: 0.7em; height: 0.7em; margin-left: var(--space-1); border-radius: 50%; vertical-align: 0.05em; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.25); }
+.detail__ext {
+  display: inline-flex; align-items: center; gap: var(--space-1); margin: 0 0 var(--space-2);
+  padding: 2px var(--space-2); border-radius: var(--radius-pill); border: var(--border-w) dashed var(--c-border-strong);
+  font-size: var(--fs-xs); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-text-muted);
+}
+.detail__ext .icon { width: 0.8rem; height: 0.8rem; }
+.detail__ext-note {
+  margin: 0; padding: var(--space-3) var(--space-4); font-size: var(--fs-sm); color: var(--c-text-muted);
+  border-bottom: var(--border-w) solid var(--c-border);
+}
+@media (min-width: 768px) { .detail__ext-note { padding-inline: var(--space-6); } }
+
 .elsewhere__more {
   display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-3);
   font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--c-link);
