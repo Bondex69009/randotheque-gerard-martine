@@ -29,6 +29,9 @@ for (const [page, data] of [['index.html', 'data/randos.js'], ['compteur.html', 
 }
 copy('data/compteur.js', 'data/compteur.js');
 copy('robots.txt', 'robots.txt');
+// Appli installable : manifeste et service worker à la racine du site
+copy('manifest.webmanifest', 'manifest.webmanifest');
+copy('sw.js', 'sw.js');
 copy('assets', 'assets', (src) => noHidden(src) && !/[\\/]admin\.(css|js)$/.test(src));
 copy('data/randos.js', 'data/randos.js');
 copy('data/tracks', 'data/tracks');

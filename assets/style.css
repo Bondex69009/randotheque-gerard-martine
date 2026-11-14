@@ -961,3 +961,36 @@ h1, h2, h3 { line-height: var(--lh-tight); margin: 0; }
 .btn--fly:hover { border-color: var(--c-accent); background: linear-gradient(135deg, color-mix(in srgb, var(--c-accent) 26%, transparent), color-mix(in srgb, var(--c-cyan) 16%, transparent)); }
 .btn--fly > .icon:first-child { color: var(--c-accent); }
 .btn--fly .btn__meta { font-size: var(--fs-xs); color: var(--c-text-muted); font-weight: var(--fw-medium); }
+
+/* ------------------------------------------------------------- Installer l'appli (assets/install.js) */
+.install-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2); min-height: 2.5rem; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill); border: 0; background: var(--c-accent); color: var(--c-on-accent);
+  font: inherit; font-size: var(--fs-sm); font-weight: var(--fw-bold); cursor: pointer; white-space: nowrap;
+}
+.install-btn[hidden] { display: none; }
+.install-btn:hover { background: var(--c-accent-hover); }
+.install-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+.install-btn .icon { width: 1.1rem; height: 1.1rem; }
+@media (max-width: 400px) { .install-btn { padding: 0 var(--space-3); } }
+.install-help {
+  width: min(26rem, calc(100vw - 2rem)); padding: 0; border: var(--border-w) solid var(--c-border-strong);
+  border-radius: var(--radius-lg); background: var(--c-bg-raised); color: var(--c-text); box-shadow: var(--shadow-pop);
+}
+.install-help::backdrop { background: var(--c-overlay); }
+.install-help__inner { display: grid; gap: var(--space-4); padding: var(--space-6); text-align: center; }
+.install-help__icon { justify-self: center; border-radius: 22%; }
+.install-help__title { font-size: var(--fs-xl); font-weight: var(--fw-bold); line-height: var(--lh-tight); }
+.install-help__lead, .install-help__note { color: var(--c-text-muted); font-size: var(--fs-sm); }
+.install-help__steps { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; text-align: left; }
+.install-help__steps li { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); background: var(--c-surface); }
+.install-help__ico { flex: none; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: var(--radius-sm); background: var(--c-accent-ghost); color: var(--c-accent); }
+.install-help__ico svg { width: 1.4rem; height: 1.4rem; }
+@media (max-width: 600px) {
+  .install-btn__more { display: none; }
+  .site-header__inner { gap: var(--space-2); }
+  .brand { min-width: 0; flex: 1 1 auto; }
+  .brand__text { min-width: 0; overflow: hidden; }
+  .brand__title, .brand__subtitle { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .header-nav { flex: none; }
+}

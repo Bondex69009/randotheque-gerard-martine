@@ -10,12 +10,17 @@
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="icon" href="assets/favicon.png" type="image/png" sizes="64x64">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Randothèque G&amp;M">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="">
-  <link rel="stylesheet" href="assets/style.css?v=33">
+  <link rel="stylesheet" href="assets/style.css?v=35">
 </head>
 <body>
   <a class="skip-link" href="#resultats">Aller aux résultats</a>
@@ -30,6 +35,9 @@
         </span>
       </a>
       <nav class="header-nav" aria-label="Liens utiles">
+        <button type="button" class="install-btn" id="install-app" data-app-name="la Randothèque" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span>Installer<span class="install-btn__more"> l'appli</span></span>
+        </button>
         <a class="header-link" href="https://photosge30132.blogspot.com" target="_blank" rel="noopener" title="Randonnées &amp; Photos de Gé">
           <svg class="icon header-link__icon" aria-hidden="true"><use href="#i-image"/></svg>
           <span class="header-link__label">Randos &amp; Photos</span>
@@ -256,5 +264,6 @@
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
   <script src="assets/ailleurs.js?v=2"></script>
   <script src="assets/app.js?v=40"></script>
+  <script src="assets/install.js?v=2"></script>
 </body>
 </html>
