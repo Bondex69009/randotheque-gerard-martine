@@ -249,10 +249,13 @@ async function main() {
 
       const id = idOf(rel);
       const simplified = simplifyTo(pts, 1500, 4);
-      tracks.set(id, simplified.map((p) => [
-        +p.lat.toFixed(5), +p.lon.toFixed(5),
-        p.ele == null ? null : Math.round(p.ele), +(p.d / 1000).toFixed(3),
-      ]));
+      // 5e valeur (si la trace est horodatée) : secondes depuis le départ, pour colorer la trace selon le rythme
+      const t0 = rec ? (pts.find((p) => p.time) || {}).time : null;
+      tracks.set(id, simplified.map((p) => {
+        const row = [+p.lat.toFixed(5), +p.lon.toFixed(5), p.ele == null ? null : Math.round(p.ele), +(p.d / 1000).toFixed(3)];
+        if (t0) row.push(p.time ? Math.round((p.time - t0) / 1000) : null);
+        return row;
+      }));
       const shape = simplifyTo(pts, 48, 20).map((p) => [+p.lat.toFixed(4), +p.lon.toFixed(4)]);
 
       const ibpOfficial = (sidecar && sidecar.ibp) || (blog && blog.ibp) || null;

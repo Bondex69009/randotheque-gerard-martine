@@ -74,7 +74,7 @@
   const SHOW = { title: 'Nom', date: 'Date', place: 'Lieu', profile: 'Profil', brand: 'Signature', markers: 'Départ / arrivée' };
   const DEFAULTS = {
     mode: 'image', format: 'story', bg: 'plan', gradient: 'crepuscule', solid: '#0d1322', dim: 25,
-    trackColor: 'level', customColor: '#fc5200', width: 10, glow: true, slope: false,
+    trackColor: 'level', customColor: '#fc5200', width: 10, glow: true, slope: false, pace: true,
     stats: ['distance', 'dplus', 'duree', 'ibp'], show: ['title', 'date', 'place', 'profile', 'brand', 'markers'],
     seconds: 10, textTheme: 'auto', anim3d: true,
   };
@@ -97,6 +97,14 @@
   // Pente : du plat au très raide (montée), descente à part
   const SLOPES = [[5, '#7cc84a'], [10, '#f6d32d'], [15, '#f59e0b'], [20, '#e5452f'], [Infinity, '#8b1a1a']];
   const slopeColor = (g) => (g < -2 ? '#5f9fd0' : SLOPES.find(([max]) => g < max)[1]);
+  // Rythme (façon Nike Run Club) : rouge = lent, orange, jaune, vert fluo = rapide, relatif à la rando elle-même
+  const PACE_RAMP = [[0, [255, 31, 61]], [0.35, [255, 138, 0]], [0.62, [255, 230, 0]], [1, [57, 255, 20]]];
+  const paceRgb = (u) => {
+    u = clamp(u, 0, 1);
+    let k = 1; while (k < PACE_RAMP.length - 1 && PACE_RAMP[k][0] < u) k++;
+    const [ua, a] = PACE_RAMP[k - 1], [ub, b] = PACE_RAMP[k], f = (u - ua) / (ub - ua || 1);
+    return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * f)).join(',')})`;
+  };
 
   // ------------------------------------------------------------ Projection (Web Mercator, unités « monde » de 256 px au zoom 0)
   const mx = (lon) => ((lon + 180) / 360) * 256;
@@ -116,7 +124,7 @@
   // ------------------------------------------------------------ Préparation de la trace
   function prepareTrack(track) {
     const pts = track.filter((p) => p && p[0] != null && p[1] != null);
-    const P = pts.map((p) => ({ x: mx(p[1]), y: my(p[0]), ele: p[2], d: p[3] }));
+    const P = pts.map((p) => ({ x: mx(p[1]), y: my(p[0]), ele: p[2], d: p[3], t: Number.isFinite(p[4]) ? p[4] : null }));
     const total = P[P.length - 1].d || 0;
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
     for (const p of P) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); }
@@ -138,7 +146,46 @@
       else if (ref == null) ref = e;
       up.push(u); down.push(dn);
     }
-    return { P, total, up, down, bbox: { x0, x1, y0, y1 }, grade, eMin: eles.length ? Math.min(...eles) : 0, eMax: eles.length ? Math.max(...eles) : 1, hasEle: eles.length > 1 };
+    return { P, total, up, down, bbox: { x0, x1, y0, y1 }, grade, pace: paceOf(P), eMin: eles.length ? Math.min(...eles) : 0, eMax: eles.length ? Math.max(...eles) : 1, hasEle: eles.length > 1 };
+  }
+
+  // Vitesse lissée sur ~300 m en chaque point (pauses neutralisées : jamais moins de 1,5 km/h),
+  // ramenée entre les 5 % les plus lents et les 5 % les plus rapides de la rando
+  function paceOf(P) {
+    if (P.length < 10 || P.filter((p) => p.t != null).length < P.length * 0.8) return null;
+    const dd = [0], dt = [0];
+    for (let i = 1; i < P.length; i++) {
+      const a = P[i - 1], b = P[i], dist = Math.max(0, b.d - a.d);
+      const sec = a.t != null && b.t != null ? b.t - a.t : null;
+      dd.push(sec > 0 ? dist : 0);
+      dt.push(sec > 0 ? Math.min(sec / 3600, dist / 1.5) : 0);
+    }
+    const v = P.map((p, i) => {
+      let j = i; while (j < P.length - 1 && P[j].d - p.d < 0.15) j++;
+      let k = i; while (k > 0 && p.d - P[k].d < 0.15) k--;
+      let D = 0, T = 0; for (let m = k + 1; m <= j; m++) { D += dd[m]; T += dt[m]; }
+      return T > 0 ? D / T : null;
+    });
+    const fill = v.findIndex((x) => x != null);
+    if (fill < 0) return null;
+    for (let i = 0; i < v.length; i++) if (v[i] == null) v[i] = i ? v[i - 1] : v[fill];
+    const w = v.map((x, i) => [x, dd[i]]).filter(([, d]) => d > 0).sort((a, b) => a[0] - b[0]);
+    const tot = w.reduce((s, [, d]) => s + d, 0);
+    if (!(tot > 0.3)) return null;
+    const pct = (q) => { let acc = 0; for (const [x, d] of w) { acc += d; if (acc >= tot * q) return x; } return w[w.length - 1][0]; };
+    let lo = pct(0.05), hi = pct(0.95);
+    if (hi - lo < 0.6) { const m = (hi + lo) / 2; lo = m - 0.3; hi = m + 0.3; }
+    const u = v.map((x) => (x - lo) / (hi - lo));
+    return { v, u, color: u.map(paceRgb), lo, hi };
+  }
+  const paceOn = () => !!(opts.pace && geo.pace);
+  const slopeOn = () => !paceOn() && !!(opts.slope && geo.hasEle);
+  // Couleur du rythme à la distance d (km)
+  function paceColorAt(d) {
+    const P = geo.P;
+    let lo = 0, hi = P.length - 1;
+    while (lo < hi) { const m = (lo + hi) >> 1; if (P[m].d < d) lo = m + 1; else hi = m; }
+    return geo.pace.color[lo];
   }
 
   // ------------------------------------------------------------ Mise en page selon le format
@@ -395,6 +442,7 @@
     const isMap = !!MAPS[opts.bg] || !!mapCanvas;
     const isPhoto = opts.bg === 'blog' || opts.bg === 'perso';
     const color = trackColor();
+    const pace = paceOn();
     g.save();
     g.clearRect(0, 0, W, H);
 
@@ -436,15 +484,21 @@
     }
     let head = pathTo(upto);
     g.strokeStyle = halo; g.lineWidth = lw + Math.max(3, lw * 0.5); g.stroke();
-    if (opts.glow) { g.save(); g.shadowColor = color; g.shadowBlur = lw * 2.2; }
-    if (opts.slope && geo.hasEle) {
-      // Couleur selon la pente : segment par segment
+    if (opts.glow) { g.save(); g.shadowColor = pace ? 'rgba(255,230,0,0.7)' : color; g.shadowBlur = lw * 2.2; }
+    if (pace || slopeOn()) {
+      // Couleur selon le rythme (dégradé continu) ou selon la pente : segment par segment
       g.lineWidth = lw;
       for (let i = 1; i < P.length && P[i - 1].d <= upto; i++) {
         const a = P[i - 1], b = P[i];
         const f = b.d > upto ? (upto - a.d) / Math.max(b.d - a.d, 1e-9) : 1;
-        g.beginPath(); g.moveTo(V.X(a.x), V.Y(a.y)); g.lineTo(V.X(a.x + (b.x - a.x) * f), V.Y(a.y + (b.y - a.y) * f));
-        g.strokeStyle = slopeColor(geo.grade[i]); g.stroke();
+        const x0 = V.X(a.x), y0 = V.Y(a.y), x1 = V.X(a.x + (b.x - a.x) * f), y1 = V.Y(a.y + (b.y - a.y) * f);
+        g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1);
+        if (pace) {
+          const ca = geo.pace.color[i - 1], cb = geo.pace.color[i];
+          if (ca === cb || Math.hypot(x1 - x0, y1 - y0) < 1) g.strokeStyle = cb;
+          else { const gr = g.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, ca); gr.addColorStop(1, cb); g.strokeStyle = gr; }
+        } else g.strokeStyle = slopeColor(geo.grade[i]);
+        g.stroke();
       }
     } else {
       head = pathTo(upto); g.strokeStyle = color; g.lineWidth = lw; g.stroke();
@@ -459,8 +513,9 @@
     }
     if (t < 1 && head) {
       const pulse = 1 + 0.25 * Math.sin(clock * 6.3);
-      g.beginPath(); g.arc(head[0], head[1], lw * 2.2 * pulse, 0, Math.PI * 2); g.fillStyle = `${color}55`; g.fill();
-      dot(head[0], head[1], lw * 1.1, color, '#ffffff');
+      const hc = pace ? paceColorAt(upto) : color;
+      g.beginPath(); g.arc(head[0], head[1], lw * 2.2 * pulse, 0, Math.PI * 2); g.globalAlpha = 0.33; g.fillStyle = hc; g.fill(); g.globalAlpha = 1;
+      dot(head[0], head[1], lw * 1.1, hc, '#ffffff');
     }
     g.restore(); // fin du zoom
     }
@@ -514,9 +569,16 @@
       g.lineTo(x + w, py + h); g.closePath();
       g.fillStyle = dark ? 'rgba(22,24,31,0.12)' : 'rgba(255,255,255,0.16)'; g.fill();
       g.save(); g.clip();
-      const gr = g.createLinearGradient(0, py, 0, py + h);
-      gr.addColorStop(0, `${color}dd`); gr.addColorStop(1, `${color}22`);
-      g.fillStyle = gr; g.fillRect(x, py, w * t, h);
+      if (pace) {
+        // Profil coloré selon le rythme, de gauche à droite
+        const gr = g.createLinearGradient(x, 0, x + w, 0);
+        for (let k = 0; k <= 60; k++) gr.addColorStop(k / 60, paceColorAt((geo.total * k) / 60));
+        g.globalAlpha = 0.85; g.fillStyle = gr; g.fillRect(x, py, w * t, h); g.globalAlpha = 1;
+      } else {
+        const gr = g.createLinearGradient(0, py, 0, py + h);
+        gr.addColorStop(0, `${color}dd`); gr.addColorStop(1, `${color}22`);
+        g.fillStyle = gr; g.fillRect(x, py, w * t, h);
+      }
       g.restore();
       if (t < 1) {
         const cx = px(upto);
@@ -525,6 +587,15 @@
       const s = Math.round(L.titleSize * 0.3);
       g.font = `600 ${s}px ${SITE.fontSans}`; g.fillStyle = inkSoft;
       if (R.altMax != null) g.fillText(`${nf0.format(R.altMax)} m`, x, py - s * 0.35);
+      if (pace) { // légende du rythme
+        const lab = ['Lent', 'Rapide'], bw = s * 5, bh = Math.max(4, s * 0.38), by = py - s * 0.35 - s * 0.34 - bh / 2;
+        const rw = g.measureText(lab[1]).width, bx = x + w - rw - s * 0.4 - bw;
+        g.textAlign = 'right'; g.fillText(lab[0], bx - s * 0.4, py - s * 0.35); g.textAlign = 'left';
+        g.fillText(lab[1], bx + bw + s * 0.4, py - s * 0.35);
+        const lg = g.createLinearGradient(bx, 0, bx + bw, 0);
+        PACE_RAMP.forEach(([u]) => lg.addColorStop(u, paceRgb(u)));
+        g.fillStyle = lg; rrect(g, bx, by, bw, bh, bh / 2); g.fill();
+      }
     }
 
     // Chiffres
@@ -648,7 +719,7 @@
     const idx = (d) => clamp(d / step, 0, n - 1);
     const lerp = (arr, d) => { const f = idx(d), i = Math.floor(f), t = f - i; return i >= n - 1 ? arr[n - 1] : arr[i] + (arr[i + 1] - arr[i]) * t; };
     return {
-      total, n,
+      total, n, step,
       pos: (d) => [lerp(lon, d), lerp(lat, d)],
       coordsTo: (d) => { const end = Math.floor(idx(d)), out = []; for (let i = 0; i <= end; i++) out.push([lon[i], lat[i]]); out.push([lerp(lon, d), lerp(lat, d)]); return out; },
       all: () => Array.from({ length: n }, (_, i) => [lon[i], lat[i]]),
@@ -667,7 +738,7 @@
   }
   async function ensure3dNow(P) {
     const color = trackColor();
-    const key = JSON.stringify([R.id, P.L.W, P.L.H, color, opts.width, opts.show.includes('markers'), P.L.track, P.TL.frames]);
+    const key = JSON.stringify([R.id, P.L.W, P.L.H, color, paceOn(), opts.width, opts.show.includes('markers'), P.L.track, P.TL.frames]);
     if (f3 && f3.key === key) return f3;
     await loadScript(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`);
     const ML = window.maplibregl;
@@ -700,9 +771,9 @@
             { id: 'bg', type: 'background', paint: { 'background-color': '#1b2430' } },
             { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-fade-duration': 0, 'raster-saturation': 0.1, 'raster-contrast': 0.08 } },
             { id: 'route', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#ffffff', 'line-opacity': 0.7, 'line-width': lw * 0.45, 'line-dasharray': [1.2, 1.6] } },
-            { id: 'done-glow', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': color, 'line-opacity': opts.glow ? 0.5 : 0, 'line-width': lw * 3, 'line-blur': lw * 1.6 } },
+            { id: 'done-glow', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['coalesce', ['get', 'c'], color], 'line-opacity': opts.glow ? 0.5 : 0, 'line-width': lw * 3, 'line-blur': lw * 1.6 } },
             { id: 'done-casing', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#0b0f14', 'line-opacity': 0.55, 'line-width': lw + 4 } },
-            { id: 'done', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': color, 'line-width': lw } },
+            { id: 'done', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['coalesce', ['get', 'c'], color], 'line-width': lw } },
             { id: 'ends', type: 'circle', source: 'ends', paint: { 'circle-radius': lw * 0.9, 'circle-color': '#ffffff', 'circle-stroke-width': lw * 0.45, 'circle-stroke-color': ['get', 'c'] } },
             { id: 'head-halo', type: 'circle', source: 'head', paint: { 'circle-radius': lw * 2.4, 'circle-color': color, 'circle-opacity': 0.35, 'circle-blur': 0.4 } },
             { id: 'head', type: 'circle', source: 'head', paint: { 'circle-radius': lw * 1.05, 'circle-color': color, 'circle-stroke-width': lw * 0.45, 'circle-stroke-color': '#ffffff' } },
@@ -726,8 +797,8 @@
     } else {
       // Même carte, réglages modifiés : couleurs et épaisseurs
       const lw = Math.max(3, opts.width * 0.55);
-      map.setPaintProperty('done', 'line-color', color); map.setPaintProperty('done', 'line-width', lw);
-      map.setPaintProperty('done-glow', 'line-color', color); map.setPaintProperty('done-glow', 'line-opacity', opts.glow ? 0.5 : 0);
+      map.setPaintProperty('done', 'line-color', ['coalesce', ['get', 'c'], color]); map.setPaintProperty('done', 'line-width', lw);
+      map.setPaintProperty('done-glow', 'line-color', ['coalesce', ['get', 'c'], color]); map.setPaintProperty('done-glow', 'line-opacity', opts.glow ? 0.5 : 0);
       map.setPaintProperty('done-casing', 'line-width', lw + 4);
       map.setPaintProperty('head', 'circle-color', color); map.setPaintProperty('head-halo', 'circle-color', color);
     }
@@ -779,7 +850,15 @@
   function apply3d(i) {
     const cam = f3.cams[clamp(i, 0, f3.cams.length - 1)];
     const map = f3.map;
-    map.getSource('done').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: f3.S.coordsTo(Math.max(cam.d, 1e-4)) } });
+    const coords = f3.S.coordsTo(Math.max(cam.d, 1e-4));
+    if (paceOn()) {
+      // Trace découpée en tronçons colorés selon le rythme
+      const features = [];
+      for (let k = 0; k < coords.length - 1; k += 6) {
+        features.push({ type: 'Feature', properties: { c: paceColorAt(Math.min(k + 3, coords.length - 1) * f3.S.step) }, geometry: { type: 'LineString', coordinates: coords.slice(k, k + 7) } });
+      }
+      map.getSource('done').setData({ type: 'FeatureCollection', features });
+    } else map.getSource('done').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords } });
     map.getSource('head').setData({ type: 'Feature', geometry: { type: 'Point', coordinates: f3.S.pos(cam.d) } });
     map.setLayoutProperty('head', 'visibility', cam.d >= f3.S.total ? 'none' : 'visible');
     map.setLayoutProperty('head-halo', 'visibility', cam.d >= f3.S.total ? 'none' : 'visible');
@@ -1110,7 +1189,8 @@
         <label class="sh-range">Épaisseur <input type="range" id="sh-width" min="4" max="22" step="1" value="${o.width}"><output>${o.width}</output></label>
         <div class="sh-chips">
           ${chip('glow', '1', 'Lueur', o.glow, 'checkbox')}
-          ${geo.hasEle ? chip('slope', '1', 'Couleur selon la pente', o.slope, 'checkbox') : ''}
+          ${geo.pace ? chip('pace', '1', 'Couleur selon le rythme', o.pace, 'checkbox') : ''}
+          ${geo.hasEle ? chip('slope', '1', 'Couleur selon la pente', slopeOn(), 'checkbox') : ''}
         </div>
       </fieldset>
       <fieldset class="sh-group" data-group="stats"><legend>Chiffres affichés</legend>
@@ -1166,7 +1246,8 @@
     else if (n === 'sh-custom') { opts.customColor = el.value; opts.trackColor = 'custom'; const r = $('input[name="trackColor"][value="custom"]', dlg); r.checked = true; r.nextElementSibling.style.setProperty('--sw', el.value); }
     else if (n === 'sh-width') { opts.width = +el.value; el.nextElementSibling.textContent = el.value; }
     else if (n === 'glow') opts.glow = el.checked;
-    else if (n === 'slope') opts.slope = el.checked;
+    else if (n === 'slope') { opts.slope = el.checked; if (el.checked && opts.pace) { opts.pace = false; const c = $('input[name="pace"]', dlg); if (c) c.checked = false; } }
+    else if (n === 'pace') { opts.pace = el.checked; if (el.checked) { opts.slope = false; const c = $('input[name="slope"]', dlg); if (c) c.checked = false; } }
     else if (n === 'stats') opts.stats = $$('input[name="stats"]:checked', dlg).map((i) => i.value);
     else if (n === 'show') opts.show = $$('input[name="show"]:checked', dlg).map((i) => i.value);
     else if (n === 'textTheme') opts.textTheme = el.value;
