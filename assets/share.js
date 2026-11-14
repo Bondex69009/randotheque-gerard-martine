@@ -37,6 +37,9 @@
     x: '<path d="M4 4h4.5l11.5 16h-4.5ZM19.5 4 13.6 10.6M4.5 20l5.9-6.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
     telegram: '<path d="m3 11 17-7-3 16-5.5-4.5L9 18l-.5-5L18 7l-11.5 6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     mail: '<rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    instagram: '<rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/>',
+    messenger: '<path d="M12 3C7 3 3 6.7 3 11.4c0 2.6 1.3 5 3.3 6.5V21l3-1.7c.9.3 1.8.4 2.7.4 5 0 9-3.7 9-8.3S17 3 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m7.5 13.5 3-3.2 2.2 2 3.8-2.8-3 3.3-2.2-2Z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>',
+    globe: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" fill="none" stroke="currentColor" stroke-width="2"/>',
     sms: '<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
   };
   const svg = (id, cls = 'sh-icon') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[id]}</svg>`;
@@ -73,8 +76,24 @@
     mode: 'image', format: 'story', bg: 'plan', gradient: 'crepuscule', solid: '#0d1322', dim: 25,
     trackColor: 'level', customColor: '#fc5200', width: 10, glow: true, slope: false,
     stats: ['distance', 'dplus', 'duree', 'ibp'], show: ['title', 'date', 'place', 'profile', 'brand', 'markers'],
-    seconds: 10, textTheme: 'auto',
+    seconds: 10, textTheme: 'auto', anim3d: true,
   };
+  const FPS = 30;
+  const ML_VER = '4.7.1';
+  const MUXER_URL = 'https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.1/build/mp4-muxer.min.js';
+  const loaded = new Map();
+  const loadScript = (url) => {
+    if (!loaded.has(url)) {
+      loaded.set(url, new Promise((res, rej) => {
+        const el = document.createElement('script');
+        el.src = url; el.async = true; el.crossOrigin = 'anonymous';
+        el.onload = res; el.onerror = () => { loaded.delete(url); rej(new Error(`chargement impossible : ${url}`)); };
+        document.head.appendChild(el);
+      }));
+    }
+    return loaded.get(url);
+  };
+  const webgl = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; } })();
   // Pente : du plat au très raide (montée), descente à part
   const SLOPES = [[5, '#7cc84a'], [10, '#f6d32d'], [15, '#f59e0b'], [20, '#e5452f'], [Infinity, '#8b1a1a']];
   const slopeColor = (g) => (g < -2 ? '#5f9fd0' : SLOPES.find(([max]) => g < max)[1]);
@@ -366,18 +385,25 @@
     return STATS[key];
   }
 
-  function drawFrame(g, L, V, t, scale = 1) {
+  // mapCanvas : image de la carte 3D (survol) qui remplace le fond et la trace dessinée en 2D
+  function drawFrame(g, L, V, t, scale = 1, clock = performance.now() / 1000, mapCanvas = null) {
     const { W, H } = L;
-    const dark = darkText();
+    const dark = mapCanvas ? false : darkText();
     const ink = dark ? '#16181f' : '#ffffff';
     const inkSoft = dark ? 'rgba(22,24,31,0.68)' : 'rgba(255,255,255,0.78)';
     const show = new Set(opts.show);
-    const isMap = !!MAPS[opts.bg];
+    const isMap = !!MAPS[opts.bg] || !!mapCanvas;
     const isPhoto = opts.bg === 'blog' || opts.bg === 'perso';
     const color = trackColor();
     g.save();
     g.clearRect(0, 0, W, H);
 
+    const P = geo.P;
+    const upto = geo.total * t;
+    if (mapCanvas) {
+      g.drawImage(mapCanvas, 0, 0, W, H);
+      if (opts.dim > 0) { g.fillStyle = `rgba(6,9,18,${Math.min(opts.dim, 40) / 100 * 0.6})`; g.fillRect(0, 0, W, H); }
+    } else {
     // Fond (léger zoom pendant l'animation, la trace suit le même mouvement)
     g.save();
     g.translate(W / 2, H / 2); g.scale(scale, scale); g.translate(-W / 2, -H / 2);
@@ -385,9 +411,7 @@
     if ((isMap || isPhoto) && opts.dim > 0) { g.fillStyle = `rgba(6,9,18,${opts.dim / 100})`; g.fillRect(0, 0, W, H); }
 
     // Trace
-    const P = geo.P;
     const lw = Math.max(3, opts.width * (Math.min(W, H) / 1080));
-    const upto = geo.total * t;
     const pathTo = (limit) => {
       g.beginPath();
       let last = null;
@@ -434,11 +458,12 @@
       if (t >= 1 && !R.loop) dot(V.X(P[P.length - 1].x), V.Y(P[P.length - 1].y), lw * 1.15, '#ffffff', '#d23a3a');
     }
     if (t < 1 && head) {
-      const pulse = 1 + 0.25 * Math.sin(performance.now() / 160);
+      const pulse = 1 + 0.25 * Math.sin(clock * 6.3);
       g.beginPath(); g.arc(head[0], head[1], lw * 2.2 * pulse, 0, Math.PI * 2); g.fillStyle = `${color}55`; g.fill();
       dot(head[0], head[1], lw * 1.1, color, '#ffffff');
     }
     g.restore(); // fin du zoom
+    }
 
     // Voiles de lisibilité (carte ou photo)
     if (isMap || isPhoto) {
@@ -459,7 +484,7 @@
 
     // En-tête : nom, date, lieu
     const appear = (delay) => easeOut(clamp((t * 1.6 - delay) / 0.5, 0, 1));
-    const titleA = anim ? appear(0) : 1;
+    const titleA = anim || encoding ? appear(0) : 1;
     g.globalAlpha = titleA;
     g.textBaseline = 'alphabetic';
     let y = L.head.y;
@@ -508,13 +533,13 @@
       opts.stats.forEach((key, i) => {
         const col = i % L.cols, row = Math.floor(i / L.cols);
         const sx = L.statsBox.x + col * cw, sy = L.statsBox.y + row * L.statH;
-        g.globalAlpha = anim ? appear(0.15 + i * 0.08) : 1;
+        g.globalAlpha = anim || encoding ? appear(0.15 + i * 0.08) : 1;
         const lab = statLabel(key).toUpperCase();
         const ls = Math.round(L.statH * 0.17);
         fitFont(g, lab, 700, ls, SITE.fontSans, cw - 16);
         g.fillStyle = inkSoft;
         g.fillText(lab, sx, sy + ls * 1.1);
-        const [v, unit] = statValue(key, anim ? t : 1);
+        const [v, unit] = statValue(key, anim || encoding ? t : 1);
         const vs = Math.round(L.statH * 0.42);
         g.font = `800 ${vs}px ${SITE.fontSans}`;
         g.fillStyle = key === 'ibp' && R.level ? (SITE.levelColor(R.level) === '#111' || R.level === 'noir' ? ink : SITE.levelColor(R.level)) : ink;
@@ -579,25 +604,263 @@
 
   // ------------------------------------------------------------ Animation (aperçu et vidéo)
   const HOLD = 2.2; // secondes d'image finale
-  function playAnimation({ record = false } = {}) {
-    stopAnimation();
+  const use3d = () => opts.mode === 'video' && opts.anim3d && webgl;
+  // Déroulé de la vidéo : t = avancement de la trace (0 → 1), zoom = léger recul de la carte 2D
+  function timeline() {
+    const is3d = use3d();
+    const intro = is3d ? 1.6 : 0.4;
+    const run = Math.max(2, opts.seconds - intro);
+    const total = intro + run + HOLD + (is3d ? 0.8 : 0);
+    const at = (el) => {
+      const r = clamp((el - intro) / run, 0, 1);
+      // 3D : vitesse presque constante (caméra embarquée) ; 2D : départ et arrivée en douceur
+      const t = el < intro ? 0 : is3d ? 0.75 * r + 0.25 * easeInOut(r) : easeInOut(r);
+      return { t, zoom: 1.08 - 0.08 * easeInOut(clamp(el / total, 0, 1)) };
+    };
+    return { is3d, intro, run, total, frames: Math.round(total * FPS), at };
+  }
+  function planFor() {
     const F = FORMATS[opts.format];
     const L = layout(F.w, F.h, opts);
-    const V = viewFor(L);
-    const total = opts.seconds + HOLD;
+    return { F, L, V: viewFor(L), TL: timeline() };
+  }
+
+  // ------------------------------------------------------------ Survol 3D satellite (MapLibre, carte hors écran)
+  // La carte est rendue à la taille exacte de la vidéo, puis recopiée image par image sous les textes.
+  let f3 = null; // { map, box, key, cams, S, total, warm }
+  let encoding = false; // vrai pendant la création image par image de la vidéo
+  const bearingOf = (a, b) => (Math.atan2((b[0] - a[0]) * Math.cos((a[1] * Math.PI) / 180), b[1] - a[1]) * 180) / Math.PI;
+  const angDiff = (a, b) => ((b - a + 540) % 360) - 180;
+  function sampler3d() {
+    const pts = TRACK.filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]) && Number.isFinite(p[3]));
+    const total = pts[pts.length - 1][3] || 0.001;
+    const step = Math.max(0.005, total / 2500);
+    const n = Math.max(2, Math.ceil(total / step) + 1);
+    const lon = new Float64Array(n), lat = new Float64Array(n);
+    let j = 0;
+    for (let i = 0; i < n; i++) {
+      const d = Math.min(total, i * step);
+      while (j < pts.length - 2 && pts[j + 1][3] < d) j++;
+      const a = pts[j], b = pts[j + 1] || a;
+      const f = b[3] > a[3] ? clamp((d - a[3]) / (b[3] - a[3]), 0, 1) : 0;
+      lat[i] = a[0] + (b[0] - a[0]) * f; lon[i] = a[1] + (b[1] - a[1]) * f;
+    }
+    const idx = (d) => clamp(d / step, 0, n - 1);
+    const lerp = (arr, d) => { const f = idx(d), i = Math.floor(f), t = f - i; return i >= n - 1 ? arr[n - 1] : arr[i] + (arr[i + 1] - arr[i]) * t; };
+    return {
+      total, n,
+      pos: (d) => [lerp(lon, d), lerp(lat, d)],
+      coordsTo: (d) => { const end = Math.floor(idx(d)), out = []; for (let i = 0; i <= end; i++) out.push([lon[i], lat[i]]); out.push([lerp(lon, d), lerp(lat, d)]); return out; },
+      all: () => Array.from({ length: n }, (_, i) => [lon[i], lat[i]]),
+    };
+  }
+  function padding3d(L) {
+    if (L.land) return { top: L.pad, bottom: L.pad, left: L.pad, right: L.W - L.panelLeft + L.pad * 0.5 };
+    return { top: Math.round(L.head.y + L.head.h + L.pad * 0.6), bottom: Math.round(L.H - L.panelTop + L.pad * 0.3), left: L.pad, right: L.pad };
+  }
+  // Un seul chargement de la carte 3D à la fois (aperçu et création de la vidéo peuvent se croiser)
+  let f3Lock = Promise.resolve();
+  function ensure3d(P) {
+    const run = f3Lock.then(() => ensure3dNow(P));
+    f3Lock = run.catch(() => {});
+    return run;
+  }
+  async function ensure3dNow(P) {
+    const color = trackColor();
+    const key = JSON.stringify([R.id, P.L.W, P.L.H, color, opts.width, opts.show.includes('markers'), P.L.track, P.TL.frames]);
+    if (f3 && f3.key === key) return f3;
+    await loadScript(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`);
+    const ML = window.maplibregl;
+    if (!ML) throw new Error('MapLibre indisponible');
+    const S = f3 && f3.rid === R.id ? f3.S : sampler3d();
+    let map = f3 && f3.size === `${P.L.W}x${P.L.H}` && f3.rid === R.id ? f3.map : null;
+    if (!map) {
+      destroy3d();
+      const box = document.createElement('div');
+      // hors de l'écran mais bien « affichée » : WebGL continue de dessiner
+      box.style.cssText = `position:fixed;left:-${P.L.W + 500}px;top:0;width:${P.L.W}px;height:${P.L.H}px;pointer-events:none;`;
+      box.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(box);
+      const fr = !!R.region;
+      const all = S.all();
+      const lw = Math.max(3, opts.width * 0.55);
+      map = new ML.Map({
+        container: box,
+        style: {
+          version: 8,
+          sources: {
+            sat: { type: 'raster', tileSize: 256, maxzoom: 19, tiles: [MAPS.photo.url(fr)] },
+            dem: { type: 'raster-dem', encoding: 'terrarium', tileSize: 256, maxzoom: 15, tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'] },
+            route: { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: all } } },
+            done: { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [all[0], all[0]] } } },
+            head: { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Point', coordinates: all[0] } } },
+            ends: { type: 'geojson', data: { type: 'FeatureCollection', features: [] } },
+          },
+          layers: [
+            { id: 'bg', type: 'background', paint: { 'background-color': '#1b2430' } },
+            { id: 'sat', type: 'raster', source: 'sat', paint: { 'raster-fade-duration': 0, 'raster-saturation': 0.1, 'raster-contrast': 0.08 } },
+            { id: 'route', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#ffffff', 'line-opacity': 0.7, 'line-width': lw * 0.45, 'line-dasharray': [1.2, 1.6] } },
+            { id: 'done-glow', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': color, 'line-opacity': opts.glow ? 0.5 : 0, 'line-width': lw * 3, 'line-blur': lw * 1.6 } },
+            { id: 'done-casing', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#0b0f14', 'line-opacity': 0.55, 'line-width': lw + 4 } },
+            { id: 'done', type: 'line', source: 'done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': color, 'line-width': lw } },
+            { id: 'ends', type: 'circle', source: 'ends', paint: { 'circle-radius': lw * 0.9, 'circle-color': '#ffffff', 'circle-stroke-width': lw * 0.45, 'circle-stroke-color': ['get', 'c'] } },
+            { id: 'head-halo', type: 'circle', source: 'head', paint: { 'circle-radius': lw * 2.4, 'circle-color': color, 'circle-opacity': 0.35, 'circle-blur': 0.4 } },
+            { id: 'head', type: 'circle', source: 'head', paint: { 'circle-radius': lw * 1.05, 'circle-color': color, 'circle-stroke-width': lw * 0.45, 'circle-stroke-color': '#ffffff' } },
+          ],
+          terrain: { source: 'dem', exaggeration: 1.45 },
+          sky: { 'sky-color': '#6aa6dc', 'horizon-color': '#dfeaf4', 'fog-color': '#cfdbe6', 'sky-horizon-blend': 0.6, 'horizon-fog-blend': 0.7, 'fog-ground-blend': 0.3, 'atmosphere-blend': 0.8 },
+        },
+        center: all[0], zoom: 13, pitch: 55,
+        interactive: false, attributionControl: false, preserveDrawingBuffer: true, pixelRatio: 1, fadeDuration: 0, maxPitch: 80,
+      });
+      // On attend seulement le style : les tuiles (satellite, relief) se chargent ensuite pendant le préchargement
+      await new Promise((res, rej) => {
+        // (style fourni directement : il peut être prêt avant même qu'on écoute l'événement)
+        const ok = () => !!(map.style && map.style._loaded);
+        if (ok()) { res(); return; }
+        map.once('style.load', res);
+        const poll = setInterval(() => { if (ok()) { clearInterval(poll); res(); } }, 100);
+        setTimeout(() => { clearInterval(poll); if (ok()) res(); else rej(new Error('carte 3D : style non chargé')); }, 15000);
+      });
+      f3 = { map, box, rid: R.id, size: `${P.L.W}x${P.L.H}`, S };
+    } else {
+      // Même carte, réglages modifiés : couleurs et épaisseurs
+      const lw = Math.max(3, opts.width * 0.55);
+      map.setPaintProperty('done', 'line-color', color); map.setPaintProperty('done', 'line-width', lw);
+      map.setPaintProperty('done-glow', 'line-color', color); map.setPaintProperty('done-glow', 'line-opacity', opts.glow ? 0.5 : 0);
+      map.setPaintProperty('done-casing', 'line-width', lw + 4);
+      map.setPaintProperty('head', 'circle-color', color); map.setPaintProperty('head-halo', 'circle-color', color);
+    }
+    const ends = [{ c: '#1a8f4a', at: S.pos(0) }].concat(R.loop ? [] : [{ c: '#d23a3a', at: S.pos(S.total) }]);
+    map.getSource('ends').setData({ type: 'FeatureCollection', features: opts.show.includes('markers') ? ends.map((e) => ({ type: 'Feature', properties: { c: e.c }, geometry: { type: 'Point', coordinates: e.at } })) : [] });
+    map.setPadding(padding3d(P.L));
+    f3.cams = cameraPath(map, S, P);
+    f3.key = key;
+    return f3;
+  }
+  // Trajet de la caméra, calculé d'avance image par image (identique pour l'aperçu et la vidéo)
+  function cameraPath(map, S, P) {
+    const { TL } = P;
+    const total = S.total;
+    const look = clamp(total * 0.05, 0.12, 0.7);
+    const zoom = clamp(15.8 - Math.log2(Math.max(total, 1) / 4) * 0.5, 13.2, 16);
+    const pitch = 62;
+    const target = (d) => ({ c: S.pos(d), b: bearingOf(S.pos(Math.max(0, d - look * 0.3)), S.pos(Math.min(total, d + look))) });
+    const all = S.all();
+    let bounds = new window.maplibregl.LngLatBounds(all[0], all[0]);
+    for (const c of all) bounds = bounds.extend(c);
+    const ov = map.cameraForBounds(bounds, { padding: 40 }) || { center: bounds.getCenter(), zoom: 12 };
+    const t0 = target(0);
+    const overview = { c: [ov.center.lng ?? ov.center[0], ov.center.lat ?? ov.center[1]], z: Math.min(ov.zoom, zoom - 0.5), p: 45, b: t0.b };
+    const cams = [];
+    let cam = { c: t0.c, b: t0.b };
+    const runEnd = TL.intro + TL.run;
+    for (let i = 0; i < TL.frames; i++) {
+      const el = i / FPS;
+      const { t } = TL.at(el);
+      const d = total * t;
+      if (el < TL.intro) {
+        const k = easeInOut(el / TL.intro);
+        cams.push({ c: [overview.c[0] + (t0.c[0] - overview.c[0]) * k, overview.c[1] + (t0.c[1] - overview.c[1]) * k], z: overview.z + (zoom - overview.z) * k, p: overview.p + (pitch - overview.p) * k, b: overview.b, d: 0 });
+        continue;
+      }
+      const tg = target(d);
+      const dt = 1 / FPS;
+      cam.c = [cam.c[0] + (tg.c[0] - cam.c[0]) * (1 - Math.exp(-dt * 5)), cam.c[1] + (tg.c[1] - cam.c[1]) * (1 - Math.exp(-dt * 5))];
+      cam.b += angDiff(cam.b, tg.b) * (1 - Math.exp(-dt * 1.4));
+      if (el <= runEnd) { cams.push({ c: cam.c.slice(), z: zoom, p: pitch, b: cam.b, d }); continue; }
+      // Fin : la caméra s'élève pour montrer toute la trace, en tournant doucement
+      const k = easeInOut(clamp((el - runEnd) / 1.8, 0, 1));
+      const last = cams[cams.length - 1];
+      cams.push({ c: [last.c[0] + (overview.c[0] - last.c[0]) * k * 0.15, last.c[1] + (overview.c[1] - last.c[1]) * k * 0.15], z: last.z + (overview.z - last.z) * k * 0.15, p: last.p + (50 - last.p) * k * 0.15, b: last.b + 0.25, d: total });
+    }
+    return cams;
+  }
+  function apply3d(i) {
+    const cam = f3.cams[clamp(i, 0, f3.cams.length - 1)];
+    const map = f3.map;
+    map.getSource('done').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: f3.S.coordsTo(Math.max(cam.d, 1e-4)) } });
+    map.getSource('head').setData({ type: 'Feature', geometry: { type: 'Point', coordinates: f3.S.pos(cam.d) } });
+    map.setLayoutProperty('head', 'visibility', cam.d >= f3.S.total ? 'none' : 'visible');
+    map.setLayoutProperty('head-halo', 'visibility', cam.d >= f3.S.total ? 'none' : 'visible');
+    map.jumpTo({ center: cam.c, zoom: cam.z, pitch: cam.p, bearing: cam.b });
+  }
+  // Image exacte : on attend que les tuiles visibles soient chargées (au plus 4 s)
+  // (chaque attente est bornée : si la carte ne dessine plus, par exemple onglet masqué, on n'attend pas indéfiniment)
+  const renderOnce = (map, ms = 1500) => Promise.race([new Promise((res) => { map.once('render', res); map.triggerRepaint(); }), new Promise((res) => setTimeout(res, ms))]);
+  async function frame3d(i) {
+    apply3d(i);
+    const map = f3.map;
+    await renderOnce(map);
+    if (!map.areTilesLoaded()) await Promise.race([new Promise((res) => map.once('idle', res)), new Promise((res) => setTimeout(res, 4000))]);
+    await renderOnce(map);
+    return map.getCanvas();
+  }
+  function destroy3d() {
+    if (!f3) return;
+    try { f3.map.remove(); } catch { /* déjà supprimée */ }
+    f3.box.remove();
+    f3 = null;
+  }
+  // Avant l'aperçu : on survole rapidement le parcours pour charger les tuiles (le rendu sera fluide)
+  async function warm3d(onProgress) {
+    if (f3.warm === f3.key) return;
+    const n = f3.cams.length;
+    const stepEvery = Math.max(1, Math.round(n / 9));
+    for (let i = 0, k = 0; i < n; i += stepEvery, k++) {
+      apply3d(i);
+      await Promise.race([new Promise((res) => f3.map.once('idle', res)), new Promise((res) => setTimeout(res, 1800))]);
+      if (onProgress) onProgress(i / n);
+    }
+    f3.warm = f3.key;
+  }
+
+  async function drawAt(P, i, exact) {
+    const el = i / FPS;
+    const { t, zoom } = P.TL.at(el);
+    if (P.TL.is3d) {
+      const mc = exact ? await frame3d(i) : (apply3d(i), f3.map.getCanvas());
+      drawFrame(ctx, P.L, P.V, t, 1, el, mc);
+    } else {
+      drawFrame(ctx, P.L, P.V, t, zoom, el);
+    }
+  }
+
+  async function prepare(P) {
+    await render(); // fond 2D et polices
+    if (P.TL.is3d) {
+      busy(true, 'Préparation du survol 3D…');
+      try {
+        await ensure3d(P);
+        await warm3d((p) => setStatus(`Chargement du relief et des images satellite… ${Math.round(p * 100)} %`));
+      } finally { busy(false); setStatus(''); }
+    }
+  }
+
+  function playAnimation({ record = false } = {}) {
+    stopAnimation();
+    const P = planFor();
     return new Promise((resolve) => {
-      const t0 = performance.now();
       anim = { raf: 0, resolve };
-      const step = () => {
-        const el = (performance.now() - t0) / 1000;
-        const zoom = 1.08 - 0.08 * easeInOut(clamp(el / total, 0, 1));
-        drawFrame(ctx, L, V, el < 0.4 ? 0 : easeInOut(clamp((el - 0.4) / (opts.seconds - 0.4), 0, 1)), zoom);
-        if (anim && anim.onProgress) anim.onProgress(el / total);
-        if (el < total && anim) anim.raf = requestAnimationFrame(step);
-        else { const a = anim; anim = null; drawFrame(ctx, L, V, 1); if (a) a.resolve(); }
-      };
-      if (record) anim.onProgress = record;
-      anim.raf = requestAnimationFrame(step);
+      (async () => {
+        try { await prepare(P); } catch (e) {
+          console.warn('Survol 3D indisponible', e);
+          setStatus('Le survol 3D n’a pas pu se charger (WebGL ou connexion) : animation à plat à la place.', true);
+          opts.anim3d = false; paintPanel(); P.TL = timeline();
+        }
+        if (!anim) return;
+        const t0 = performance.now();
+        const step = () => {
+          if (!anim) return;
+          const el = (performance.now() - t0) / 1000;
+          const i = Math.min(P.TL.frames - 1, Math.floor(el * FPS));
+          drawAt(P, i, false);
+          if (record) record(el / P.TL.total);
+          if (el < P.TL.total) anim.raf = requestAnimationFrame(step);
+          else { const a = anim; anim = null; if (a) a.resolve(); }
+        };
+        anim.raf = requestAnimationFrame(step);
+      })();
     });
   }
   function stopAnimation() {
@@ -612,26 +875,77 @@
     const list = ['video/mp4;codecs=avc1.640028', 'video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
     return list.find((m) => { try { return MediaRecorder.isTypeSupported(m); } catch { return false; } }) || null;
   }
+  const canEncode = () => typeof window.VideoEncoder === 'function' && typeof window.VideoFrame === 'function';
 
-  async function makeVideo() {
+  // Vidéo image par image (WebCodecs + MP4) : durée exacte et rendu net, même si la carte charge lentement
+  async function encodeMp4(P) {
+    await loadScript(MUXER_URL);
+    const { W, H } = P.L;
+    const bitrate = Math.round(W * H * FPS * 0.16);
+    let config = null;
+    for (const codec of ['avc1.640028', 'avc1.4d0028', 'avc1.42e028', 'avc1.640033']) {
+      const c = { codec, width: W, height: H, bitrate, framerate: FPS, latencyMode: 'quality' };
+      try { if ((await VideoEncoder.isConfigSupported(c)).supported) { config = c; break; } } catch { /* suivant */ }
+    }
+    if (!config) throw new Error('codec H.264 indisponible');
+    const muxer = new window.Mp4Muxer.Muxer({ target: new window.Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: W, height: H, frameRate: FPS }, fastStart: 'in-memory' });
+    let failure = null;
+    const enc = new VideoEncoder({ output: (chunk, meta) => muxer.addVideoChunk(chunk, meta), error: (e) => { failure = e; } });
+    enc.configure(config);
+    const N = P.TL.frames;
+    encoding = true;
+    try {
+    for (let i = 0; i < N; i++) {
+      if (failure) throw failure;
+      await drawAt(P, i, P.TL.is3d);
+      const vf = new VideoFrame(canvas, { timestamp: Math.round((i * 1e6) / FPS), duration: Math.round(1e6 / FPS) });
+      enc.encode(vf, { keyFrame: i % (FPS * 2) === 0 });
+      vf.close();
+      while (enc.encodeQueueSize > 6) await new Promise((r) => setTimeout(r, 4));
+      if (i % 6 === 0) { busy(true, `Création de la vidéo… ${Math.round((i / N) * 100)} %`); await new Promise((r) => setTimeout(r, 0)); }
+    }
+    } finally { encoding = false; }
+    await enc.flush();
+    enc.close();
+    muxer.finalize();
+    return new Blob([muxer.target.buffer], { type: 'video/mp4' });
+  }
+  // Secours (navigateurs sans WebCodecs) : enregistrement en temps réel de l'animation
+  async function recordRealtime() {
     const mime = videoMime();
-    if (!mime || !canvas.captureStream) { setStatus('Ce navigateur ne sait pas créer de vidéo. Essayez Chrome, Edge ou Safari récents.', true); return null; }
-    await render();
-    const stream = canvas.captureStream(30);
+    if (!mime || !canvas.captureStream) throw new Error('vidéo impossible');
+    const stream = canvas.captureStream(FPS);
     const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 10_000_000 });
     const chunks = [];
     rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     const stopped = new Promise((res) => { rec.onstop = res; });
-    busy(true, 'Enregistrement de la vidéo… 0 %');
     rec.start(250);
     await playAnimation({ record: (p) => busy(true, `Enregistrement de la vidéo… ${Math.min(99, Math.round(p * 100))} %`) });
     await new Promise((r) => setTimeout(r, 120));
     rec.stop();
     await stopped;
     stream.getTracks().forEach((tr) => tr.stop());
-    busy(false);
-    const type = mime.split(';')[0];
-    return new Blob(chunks, { type });
+    return new Blob(chunks, { type: mime.split(';')[0] });
+  }
+  async function makeVideo() {
+    stopAnimation();
+    const P = planFor();
+    try {
+      if (canEncode()) {
+        try { await prepare(P); } catch (e) { console.warn('Survol 3D indisponible', e); opts.anim3d = false; paintPanel(); P.TL = timeline(); setStatus('Survol 3D indisponible : animation à plat.', true); }
+        busy(true, 'Création de la vidéo… 0 %');
+        try { return await encodeMp4(P); } catch (e) { console.warn('Encodage MP4 impossible, enregistrement en direct', e); }
+      }
+      busy(true, 'Enregistrement de la vidéo…');
+      return await recordRealtime();
+    } catch {
+      setStatus('Ce navigateur ne sait pas créer de vidéo. Essayez Chrome, Edge ou Safari récents.', true);
+      return null;
+    } finally {
+      busy(false);
+      if ($('#sh-status', dlg).textContent.startsWith('Création') || $('#sh-status', dlg).textContent.startsWith('Enregistrement')) setStatus('');
+      drawAt(P, P.TL.frames - 1, false);
+    }
   }
 
   async function makeImage() {
@@ -650,14 +964,16 @@
     const ext = blob.type === 'image/png' ? 'png' : blob.type.includes('mp4') ? 'mp4' : 'webm';
     return new File([blob], `${R.date}-${slug(R.name)}.${ext}`, { type: blob.type });
   };
+  const fileKey = () => JSON.stringify([opts.mode, opts.format, opts.mode === 'video' ? use3d() : 0]);
+  let lastKey = '';
   async function currentFile() {
-    const want = opts.mode;
-    if (lastBlob && lastKind === want && lastKind === 'video') return fileFor(lastBlob);
-    const blob = want === 'video' ? await makeVideo() : await makeImage();
+    if (lastBlob && lastKey === fileKey()) return fileFor(lastBlob);
+    const blob = opts.mode === 'video' ? await makeVideo() : await makeImage();
     if (!blob) return null;
-    lastBlob = blob; lastKind = want;
+    lastBlob = blob; lastKey = fileKey(); lastKind = opts.mode;
     return fileFor(blob);
   }
+  const hasFile = () => !!lastBlob && lastKey === fileKey();
   function download(file) {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(file);
@@ -665,42 +981,78 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 8000);
   }
-  async function nativeShare() {
-    const file = await currentFile();
-    if (!file) return;
-    const data = { files: [file], title: R.name, text: `${shareText()}\n${shareUrl()}` };
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share(data); setStatus('Partagé !'); } catch (e) { if (e.name !== 'AbortError') setStatus('Partage interrompu.', true); }
-    } else {
-      download(file);
-      setStatus(`Ce navigateur ne propose pas le partage direct : ${file.name} a été téléchargé, ajoutez-le à votre message.`);
+  const canShareFile = (file) => { try { return !!(navigator.canShare && navigator.canShare({ files: [file] })); } catch { return false; } };
+
+  // Destinations proposées. format : réglé automatiquement avant de créer le fichier (story = 9:16, publication = 4:5)
+  const TARGETS = {
+    whatsapp: { label: 'WhatsApp', icon: 'whatsapp', app: 'WhatsApp', text: true, web: () => `https://wa.me/?text=${encodeURIComponent(`${shareText()}\n${shareUrl()}`)}`, webLabel: 'Ouvrir WhatsApp' },
+    messenger: { label: 'Messenger', icon: 'messenger', app: 'Messenger', text: true, web: () => 'https://www.messenger.com/', webLabel: 'Ouvrir Messenger' },
+    mail: { label: 'E-mail', icon: 'mail', app: 'Mail', text: true, web: () => `mailto:?subject=${encodeURIComponent(`Rando : ${R.name}`)}&body=${encodeURIComponent(`${shareText()}\n\n${shareUrl()}\n\n(le fichier est joint)`)}`, webLabel: 'Écrire l’e-mail' },
+    'ig-story': { label: 'Story', sub: 'Instagram', icon: 'instagram', app: 'Instagram', format: 'story', hint: 'choisissez Instagram, puis « Story »', web: () => 'https://www.instagram.com/', webLabel: 'Ouvrir Instagram', webNote: 'Les stories se publient depuis l’appli Instagram du téléphone.' },
+    'ig-post': { label: 'Publication', sub: 'Instagram', icon: 'instagram', app: 'Instagram', format: 'portrait', hint: 'choisissez Instagram, puis « Publication »', web: () => 'https://www.instagram.com/', webLabel: 'Ouvrir Instagram', webNote: 'Sur Instagram : « Créer », puis ajoutez le fichier.' },
+    'fb-story': { label: 'Story', sub: 'Facebook', icon: 'facebook', app: 'Facebook', format: 'story', hint: 'choisissez Facebook, puis « Story »', web: () => 'https://www.facebook.com/stories/create', webLabel: 'Ouvrir Facebook' },
+    'fb-post': { label: 'Publication', sub: 'Facebook', icon: 'facebook', app: 'Facebook', format: 'portrait', hint: 'choisissez Facebook, puis « Publication »', web: () => 'https://www.facebook.com/', webLabel: 'Ouvrir Facebook', webNote: 'Sur Facebook : « Photo/vidéo », puis ajoutez le fichier.' },
+    download: { label: 'Télécharger', icon: 'download' },
+  };
+  let ready = null; // { id, data } : partage prêt, en attente d'un nouveau geste de l'utilisateur
+  async function doShare(id, data) {
+    try {
+      await navigator.share(data);
+      setStatus(`Envoyé vers ${TARGETS[id].app} !`);
+      return true;
+    } catch (e) {
+      if (e.name === 'AbortError') { setStatus(''); return true; }
+      if (e.name === 'NotAllowedError') return false; // le geste a expiré pendant la création du fichier
+      setStatus('Le partage n’a pas abouti. Réessayez, ou utilisez « Télécharger ».', true);
+      return true;
     }
   }
-  async function copyImage() {
-    try {
-      const blob = await makeImage();
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-      setStatus('Image copiée : collez-la dans votre message.');
-    } catch { setStatus('Copie impossible dans ce navigateur : utilisez « Télécharger ».', true); }
+  function showReady(id, html) {
+    const el = $('#sh-status', dlg);
+    el.classList.remove('is-warn');
+    el.innerHTML = html;
   }
-  const SOCIAL = {
-    whatsapp: { label: 'WhatsApp', href: () => `https://wa.me/?text=${encodeURIComponent(`${shareText()}\n${shareUrl()}`)}` },
-    facebook: { label: 'Facebook', href: () => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl())}` },
-    x: { label: 'X', href: () => `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText())}&url=${encodeURIComponent(shareUrl())}` },
-    telegram: { label: 'Telegram', href: () => `https://t.me/share/url?url=${encodeURIComponent(shareUrl())}&text=${encodeURIComponent(shareText())}` },
-    sms: { label: 'SMS', href: () => `sms:?&body=${encodeURIComponent(`${shareText()} ${shareUrl()}`)}` },
-    mail: { label: 'E-mail', href: () => `mailto:?subject=${encodeURIComponent(`Rando : ${R.name}`)}&body=${encodeURIComponent(`${shareText()}\n\n${shareUrl()}`)}` },
-  };
+  async function shareTo(id) {
+    const T = TARGETS[id];
+    stopAnimation();
+    ready = null;
+    if (T.format && opts.format !== T.format) {
+      opts.format = T.format; save(); paintPanel();
+      setStatus(`Format ${FORMATS[T.format].label} (${FORMATS[T.format].hint}) appliqué pour ${T.sub || T.label}.`);
+    }
+    const quick = hasFile(); // fichier déjà prêt : le partage part tout de suite
+    const file = await currentFile();
+    if (!file) return;
+    if (id === 'download') { download(file); setStatus(`${file.name} téléchargé.`); return; }
+    const data = { files: [file] };
+    if (T.text) { data.title = R.name; data.text = `${shareText()}\n${shareUrl()}`; }
+    if (canShareFile(file)) {
+      if (quick || opts.mode === 'image') {
+        if (await doShare(id, data)) return;
+      }
+      // Création longue (vidéo) : le téléphone exige un nouveau geste pour ouvrir le menu de partage
+      ready = { id, data };
+      showReady(id, `<span class="sh-ready"><span>${opts.mode === 'video' ? 'Vidéo prête' : 'Image prête'}${T.hint ? ` : ${esc(T.hint)}` : ''}.</span>
+        <button type="button" class="sh-btn sh-btn--primary sh-ready__btn" data-ready>${svg(T.icon)}Envoyer sur ${esc(T.app)}</button></span>`);
+      $('[data-ready]', dlg).focus();
+      return;
+    }
+    // Ordinateur (pas de partage de fichier) : téléchargement, puis lien vers le service
+    download(file);
+    showReady(id, `<span class="sh-ready"><span>${esc(file.name)} téléchargé. ${esc(T.webNote || 'Ajoutez-le à votre message.')}</span>
+      <a class="sh-btn sh-ready__btn" href="${esc(T.web())}" ${T.web().startsWith('mailto:') ? '' : 'target="_blank" rel="noopener"'}>${svg(T.icon)}${esc(T.webLabel)}</a></span>`);
+  }
 
   // ------------------------------------------------------------ Interface
   function setStatus(msg, warn = false) {
     const el = $('#sh-status', dlg);
     if (!el) return;
     el.textContent = msg; el.classList.toggle('is-warn', !!warn);
+    if (msg) ready = null;
   }
   function busy(on, msg = '') {
     dlg.classList.toggle('is-busy', on);
-    $$('.sh-actions button', dlg).forEach((b) => { b.disabled = on; });
+    $$('.sh-actions button, .sh-targets button', dlg).forEach((b) => { b.disabled = on; });
     if (msg) setStatus(msg);
   }
   function save() { const { mode, ...rest } = opts; store.set({ ...rest, mode }); }
@@ -724,13 +1076,14 @@
         <button type="button" role="tab" class="sh-tab" data-mode="video" aria-selected="${o.mode === 'video'}">${svg('video')}Vidéo animée</button>
       </div>
       <nav class="sh-secnav" aria-label="Réglages">
-        ${[['format', 'Format'], ['bg', 'Fond'], ['trace', 'Trace'], ['stats', 'Chiffres'], ['els', 'Éléments']].concat(o.mode === 'video' ? [['anim', 'Animation']] : [])
+        ${(o.mode === 'video' ? [['anim', 'Animation']] : []).concat([['format', 'Format'], ['bg', 'Fond'], ['trace', 'Trace'], ['stats', 'Chiffres'], ['els', 'Éléments']])
     .map(([k, l]) => `<button type="button" class="sh-secbtn" data-sec="${k}" aria-pressed="${sec === k}">${l}</button>`).join('')}
       </nav>
       <fieldset class="sh-group" data-group="format"><legend>Format</legend>
         <div class="sh-chips">${Object.entries(FORMATS).map(([k, f]) => chip('format', k, `${f.label} <small>${f.hint}</small>`, o.format === k)).join('')}</div>
       </fieldset>
       <fieldset class="sh-group" data-group="bg"><legend>Fond</legend>
+        ${use3d() ? '<p class="sh-note sh-note--top">Le survol 3D utilise toujours la vue satellite avec relief. Ce fond sert à l’image et à l’animation à plat.</p>' : ''}
         <div class="sh-chips">
           ${Object.entries(MAPS).map(([k, m]) => chip('bg', k, m.label, o.bg === k)).join('')}
           ${hasBlog ? chip('bg', 'blog', 'Photo du blog', o.bg === 'blog') : ''}
@@ -770,25 +1123,28 @@
         </div>
       </fieldset>
       <fieldset class="sh-group" data-group="anim" data-video ${o.mode === 'video' ? '' : 'hidden'}><legend>Animation</legend>
-        <div class="sh-chips">${[6, 10, 15, 20].map((s) => chip('seconds', s, `${s} s`, +o.seconds === s)).join('')}</div>
-        <p class="sh-note">La trace se dessine, la carte recule doucement et les chiffres défilent. Fichier ${(videoMime() || '').includes('mp4') ? 'MP4' : 'WebM'}, ${opts.seconds + HOLD} s environ.</p>
+        <div class="sh-chips">
+          ${webgl ? chip('anim3d', '1', `${svg('globe')}Survol 3D satellite`, o.anim3d) : ''}${chip('anim3d', '0', 'Carte à plat', !o.anim3d || !webgl)}
+        </div>
+        <div class="sh-chips sh-chips--tight">${[6, 10, 15, 20].map((s) => chip('seconds', s, `${s} s`, +o.seconds === s)).join('')}</div>
+        <p class="sh-note">${use3d()
+    ? 'Vue 3D avec relief : la caméra suit la trace au-dessus des images satellite, puis s’élève pour montrer tout le parcours.'
+    : 'La trace se dessine sur le fond choisi, la carte recule doucement et les chiffres défilent.'}
+          Fichier ${canEncode() || (videoMime() || '').includes('mp4') ? 'MP4' : 'WebM'} de ${Math.round(timeline().total)} s environ.</p>
       </fieldset>`;
   }
 
   function actionsHtml() {
     const video = opts.mode === 'video';
+    const tile = (id) => {
+      const T = TARGETS[id];
+      return `<button type="button" class="sh-tg sh-tg--${id}" data-tg="${id}" title="${esc(T.sub ? `${T.sub} · ${T.label}` : T.label)}">
+        <span class="sh-tg__ico">${svg(T.icon)}</span><span class="sh-tg__txt">${T.sub ? `<small>${esc(T.sub)}</small>` : ''}${esc(T.label)}</span></button>`;
+    };
     return `
-      <div class="sh-actions">
-        ${video ? `<button type="button" class="sh-btn sh-btn--ghost" data-act="preview" aria-label="${anim ? 'Arrêter l’aperçu' : 'Aperçu de l’animation'}">${svg(anim ? 'stop' : 'play')}<span class="sh-btn__txt">${anim ? 'Arrêter' : 'Aperçu'}</span></button>` : ''}
-        <button type="button" class="sh-btn sh-btn--primary" data-act="share">${svg('share')}Partager${video ? ' la vidéo' : ''}</button>
-        <button type="button" class="sh-btn" data-act="download" aria-label="Télécharger">${svg('download')}<span class="sh-btn__txt">Télécharger</span></button>
-        ${!video && window.ClipboardItem ? `<button type="button" class="sh-btn" data-act="copy" aria-label="Copier l’image">${svg('copy')}<span class="sh-btn__txt">Copier</span></button>` : ''}
-      </div>
-      <div class="sh-social" aria-label="Envoyer le lien de la rando">
-        <span class="sh-social__label">Envoyer le lien</span>
-        ${Object.entries(SOCIAL).map(([k, s]) => `<a class="sh-soc sh-soc--${k}" href="#" data-soc="${k}" target="_blank" rel="noopener" title="${s.label}">${svg(k === 'mail' ? 'mail' : k)}<span class="visually-hidden">${s.label}</span></a>`).join('')}
-        <button type="button" class="sh-soc" data-act="link" title="Copier le lien">${svg('link')}<span class="visually-hidden">Copier le lien</span></button>
-      </div>
+      ${video ? `<div class="sh-actions"><button type="button" class="sh-btn sh-btn--ghost" data-act="preview">${svg(anim ? 'stop' : 'play')}${anim ? 'Arrêter l’aperçu' : 'Voir l’aperçu animé'}</button></div>` : ''}
+      <p class="sh-targets__label">${video ? 'Partager la vidéo' : 'Partager l’image'}</p>
+      <div class="sh-targets">${['whatsapp', 'messenger', 'mail', 'download', 'ig-story', 'ig-post', 'fb-story', 'fb-post'].map(tile).join('')}</div>
       <p class="sh-status" id="sh-status" role="status" aria-live="polite"></p>`;
   }
 
@@ -815,6 +1171,7 @@
     else if (n === 'show') opts.show = $$('input[name="show"]:checked', dlg).map((i) => i.value);
     else if (n === 'textTheme') opts.textTheme = el.value;
     else if (n === 'seconds') { opts.seconds = +el.value; }
+    else if (n === 'anim3d') { opts.anim3d = el.value === '1'; }
     else if (n === 'sh-photo') {
       const f = el.files && el.files[0];
       if (!f) return;
@@ -826,7 +1183,7 @@
     } else return;
     lastBlob = null;
     save();
-    if (n === 'seconds') { paintPanel(); }
+    if (n === 'seconds' || n === 'anim3d') { paintPanel(); }
     schedule();
   }
   let pending = 0;
@@ -847,7 +1204,7 @@
     await p;
     paintFoot();
   }
-  function paintFoot() { const s = $('#sh-status', dlg).textContent; $('.sh-foot', dlg).innerHTML = actionsHtml(); $('#sh-status', dlg).textContent = s; }
+  function paintFoot() { const s = $('#sh-status', dlg).innerHTML; $('.sh-foot', dlg).innerHTML = actionsHtml(); $('#sh-status', dlg).innerHTML = s; }
 
   async function onClick(e) {
     if (e.target === dlg || e.target.closest('[data-sh-close]')) { close(); return; }
@@ -862,22 +1219,25 @@
     const tab = e.target.closest('[data-mode]');
     if (tab) {
       stopAnimation();
-      opts.mode = tab.dataset.mode; lastBlob = null; save(); paintPanel(); await render();
+      opts.mode = tab.dataset.mode; lastBlob = null; save();
+      if (opts.mode === 'video') sec = 'anim';
+      paintPanel(); await render();
       if (opts.mode === 'video') togglePreview();
       return;
     }
-    const soc = e.target.closest('[data-soc]');
-    if (soc) { soc.href = SOCIAL[soc.dataset.soc].href(); return; } // lien suivi normalement
+    const rd = e.target.closest('[data-ready]');
+    if (rd && ready) {
+      const { id, data } = ready;
+      if (!(await doShare(id, data))) setStatus('Le téléphone a refusé le partage : touchez à nouveau le bouton.', true);
+      else ready = null;
+      return;
+    }
+    const tg = e.target.closest('[data-tg]');
+    if (tg) { shareTo(tg.dataset.tg); return; }
     const act = e.target.closest('[data-act]');
     if (!act) return;
     const a = act.dataset.act;
     if (a === 'preview') togglePreview();
-    else if (a === 'share') nativeShare();
-    else if (a === 'download') { const f = await currentFile(); if (f) { download(f); setStatus(`${f.name} téléchargé.`); } }
-    else if (a === 'copy') copyImage();
-    else if (a === 'link') {
-      try { await navigator.clipboard.writeText(shareUrl()); setStatus('Lien copié.'); } catch { setStatus(shareUrl()); }
-    }
   }
 
   function build() {
@@ -904,7 +1264,7 @@
     dlg.addEventListener('change', onChange);
     dlg.addEventListener('input', (e) => { if (['sh-dim', 'sh-width', 'sh-solid', 'sh-custom'].includes(e.target.id)) onChange(e); });
     dlg.addEventListener('click', onClick);
-    dlg.addEventListener('close', () => { stopAnimation(); document.documentElement.classList.remove('sh-open'); });
+    dlg.addEventListener('close', () => { stopAnimation(); destroy3d(); ready = null; document.documentElement.classList.remove('sh-open'); });
   }
   function close() { stopAnimation(); if (dlg && dlg.open) dlg.close(); }
 
@@ -919,7 +1279,8 @@
     opts = { ...DEFAULTS, ...saved };
     if (opts.bg === 'blog' && !(R.blog && R.blog.image)) opts.bg = 'plan';
     if (opts.bg === 'perso' && !userPhoto) opts.bg = 'plan';
-    bgKey = ''; bgCanvas = null; blogPhoto = null; lastBlob = null;
+    bgKey = ''; bgCanvas = null; blogPhoto = null; lastBlob = null; lastKey = ''; ready = null;
+    if (f3 && f3.rid !== R.id) destroy3d();
     $('#sh-title', dlg).textContent = `Partager · ${R.name}`;
     paintPanel();
     dlg.showModal();
@@ -929,5 +1290,5 @@
     if (opts.mode === 'video') togglePreview();
   }
 
-  window.RTShare = { open, close, makeImage, makeVideo }; // makeImage / makeVideo : contrôle et tests
+  window.RTShare = { open, close, makeImage, makeVideo, shareTo }; // makeImage / makeVideo : contrôle et tests
 })();

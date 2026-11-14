@@ -168,3 +168,56 @@
 }
 @media (max-width: 860px) and (max-height: 640px) { .sh-side { max-height: 60dvh; } }
 @media (prefers-reduced-motion: reduce) { .sh-stage.is-loading .sh-spinner { animation: none; } }
+
+/* Destinations de partage (WhatsApp, Messenger, e-mail, téléchargement, Instagram, Facebook) */
+.sh-targets__label { margin: 0.6rem 0 0.45rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--c-text-muted, #aaa); }
+.sh-actions + .sh-targets__label { margin-top: 0.7rem; }
+.sh-foot > .sh-targets__label:first-child { margin-top: 0; }
+.sh-targets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.4rem; }
+.sh-tg {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 0.3rem; min-height: 4.6rem; padding: 0.5rem 0.25rem 0.45rem;
+  border-radius: 0.9rem; border: 1px solid var(--c-border-strong, #444); background: var(--c-surface, #1a1a1a); color: var(--c-text, #fff);
+  font: inherit; cursor: pointer; text-align: center;
+}
+.sh-tg:hover:not(:disabled) { border-color: var(--tg, var(--c-accent, #fa0)); }
+.sh-tg:focus-visible { outline: 2px solid var(--c-accent, #fa0); outline-offset: 2px; }
+.sh-tg:disabled { opacity: 0.5; cursor: progress; }
+.sh-tg__ico { display: grid; place-items: center; width: 2.3rem; height: 2.3rem; border-radius: 50%; background: var(--tg, var(--c-surface-3, #333)); color: #fff; }
+.sh-tg__ico .sh-icon { width: 1.25rem; height: 1.25rem; }
+.sh-tg__txt { display: flex; flex-direction: column; font-size: 0.74rem; font-weight: 700; line-height: 1.15; }
+.sh-tg__txt small { font-size: 0.66rem; font-weight: 600; color: var(--c-text-muted, #aaa); }
+.sh-tg--whatsapp { --tg: #25d366; }
+.sh-tg--messenger { --tg: #0a7cff; }
+.sh-tg--messenger .sh-tg__ico { background: linear-gradient(135deg, #0a7cff, #a033ff 60%, #ff5c87); }
+.sh-tg--mail { --tg: #6b7a99; }
+.sh-tg--download .sh-tg__ico { background: var(--c-accent, #fa0); color: var(--c-on-accent, #000); }
+.sh-tg--download { --tg: var(--c-accent, #fa0); }
+.sh-tg--ig-story, .sh-tg--ig-post { --tg: #e1306c; }
+.sh-tg--ig-story .sh-tg__ico, .sh-tg--ig-post .sh-tg__ico { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.sh-tg--fb-story, .sh-tg--fb-post { --tg: #1877f2; }
+/* Story : anneau autour de l'icône, comme dans les applis */
+.sh-tg--ig-story .sh-tg__ico, .sh-tg--fb-story .sh-tg__ico { box-shadow: 0 0 0 2px var(--c-surface, #1a1a1a), 0 0 0 4px var(--tg); }
+.sh-ready { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; color: var(--c-text, #fff); }
+.sh-ready > span { flex: 1 1 12rem; }
+.sh-ready__btn { flex: 1 1 100%; text-decoration: none; }
+.sh-note--top { margin: 0 0 0.6rem; }
+.sh-chip .sh-icon { width: 1rem; height: 1rem; }
+
+@media (max-width: 860px) {
+  /* Une seule rangée d'icônes, qui défile au doigt, pour laisser la place aux réglages */
+  .sh-targets {
+    display: flex; gap: 0.15rem; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity;
+    margin-inline: -0.75rem; padding: 0.2rem 0.75rem 0.1rem;
+  }
+  .sh-targets::-webkit-scrollbar { display: none; }
+  .sh-tg { flex: 0 0 4.3rem; min-height: 0; padding: 0.15rem 0; gap: 0.25rem; border: 0; background: none; border-radius: 0.6rem; scroll-snap-align: start; }
+  .sh-tg__ico { width: 2.75rem; height: 2.75rem; }
+  .sh-tg__ico .sh-icon { width: 1.35rem; height: 1.35rem; }
+  .sh-tg__txt { font-size: 0.68rem; }
+  .sh-tg__txt small { font-size: 0.6rem; }
+  .sh-tg--ig-story .sh-tg__ico, .sh-tg--fb-story .sh-tg__ico { box-shadow: 0 0 0 2px var(--c-bg-raised, #111), 0 0 0 4px var(--tg); }
+  .sh-targets__label { margin: 0.1rem 0 0.4rem; }
+  .sh-actions + .sh-targets__label { margin-top: 0.5rem; }
+  .sh-actions .sh-btn--ghost { width: 100%; padding: 0 0.9rem; min-height: 2.6rem; }
+  .sh-ready .sh-ready__btn { width: 100%; min-height: 3rem; padding: 0 0.9rem; }
+}

@@ -1,7 +1,7 @@
 /* Randothèque – service worker : permet d'installer le site comme une appli et de rouvrir
    les pages déjà consultées sans réseau. Toujours le réseau d'abord (les données changent souvent),
    la copie locale seulement en secours. Les fonds de carte et polices (autres sites) ne sont pas gardés. */
-const CACHE = 'randotheque-v1';
+const CACHE = 'randotheque-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
@@ -17,7 +17,11 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   const url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== self.location.origin) return;
+  // Seulement les adresses http(s) du site : jamais les blob: et data: (ex. les « workers » de la carte 3D,
+  // qui ne doivent pas passer par ici), ni les fonds de carte et polices d'autres sites
+  if (req.method !== 'GET' || !/^https?:$/.test(url.protocol) || url.origin !== self.location.origin) return;
+  // Requêtes de scripts de « workers » : laissées au navigateur
+  if (req.destination === 'worker' || req.destination === 'sharedworker') return;
   // Fichiers lourds (GPX, audio) : réseau seul
   if (/\.(gpx|mp3|m4a|ogg|wav)$/i.test(url.pathname)) return;
   e.respondWith(
