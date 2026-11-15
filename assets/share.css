@@ -70,7 +70,8 @@
 .sh-swatch--wide span:not(.visually-hidden) { width: 3.25rem; border-radius: 0.6rem; }
 .sh-swatch input:checked + span { border-color: var(--c-text, #fff); box-shadow: 0 0 0 3px var(--c-accent, #fa0); }
 .sh-swatch input:focus-visible + span { outline: 2px solid var(--c-accent, #fa0); outline-offset: 3px; }
-.sh-swatch--custom input[type="color"] { position: absolute; right: -4px; bottom: -4px; width: 1.1rem; height: 1.1rem; padding: 0; border: 0; border-radius: 50%; cursor: pointer; }
+.sh-swatch--ramp span:not(.visually-hidden) { width: 4.2rem; border-radius: 999px; }
+.sh-swatch--ramp em { position: absolute; inset: 0; display: grid; place-items: center; font-style: normal; font-size: 0.7rem; font-weight: 700; color: #111; text-shadow: 0 0 3px rgba(255,255,255,0.8); pointer-events: none; }
 .sh-color { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; }
 .sh-color input { width: 3rem; height: 2.25rem; padding: 0; border: 1px solid var(--c-border-strong, #444); border-radius: 0.5rem; background: none; cursor: pointer; }
 .sh-range { display: grid; grid-template-columns: auto 1fr 3.2rem; align-items: center; gap: 0.6rem; margin-top: 0.7rem; font-size: 0.85rem; font-weight: 600; }
@@ -150,7 +151,7 @@
   .sh-swatches { padding-top: 0.25rem; padding-right: 1rem; }
   .sh-swatch span:not(.visually-hidden) { width: 2.6rem; height: 2.6rem; }
   .sh-swatch--wide span:not(.visually-hidden) { width: 3.6rem; }
-  .sh-swatch--custom input[type="color"] { width: 1.3rem; height: 1.3rem; }
+  .sh-swatch--ramp span:not(.visually-hidden) { width: 4.6rem; }
   .sh-range input { height: 2.2rem; }
   /* Barre d'actions : Partager en grand, le reste en icônes */
   .sh-foot { padding: 0.55rem 0.75rem; padding-bottom: max(0.6rem, env(safe-area-inset-bottom)); }

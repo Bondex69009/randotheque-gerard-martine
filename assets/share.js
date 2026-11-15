@@ -74,7 +74,7 @@
   const SHOW = { title: 'Nom', date: 'Date', place: 'Lieu', profile: 'Profil', brand: 'Signature', markers: 'Départ / arrivée' };
   const DEFAULTS = {
     mode: 'image', format: 'story', bg: 'plan', gradient: 'crepuscule', solid: '#0d1322', dim: 25,
-    trackColor: 'level', customColor: '#fc5200', width: 10, glow: true, slope: false, pace: true,
+    trackColor: 'pace', width: 10, glow: true,
     stats: ['distance', 'dplus', 'duree', 'ibp'], show: ['title', 'date', 'place', 'profile', 'brand', 'markers'],
     seconds: 10, textTheme: 'auto', anim3d: true,
   };
@@ -178,8 +178,15 @@
     const u = v.map((x) => (x - lo) / (hi - lo));
     return { v, u, color: u.map(paceRgb), lo, hi };
   }
-  const paceOn = () => !!(opts.pace && geo.pace);
-  const slopeOn = () => !paceOn() && !!(opts.slope && geo.hasEle);
+  // Choix de la trace : « pace » (rythme), « slope » (pente) ou l'une des couleurs imposées (pas de couleur libre)
+  function trackMode() {
+    const c = opts.trackColor;
+    if (c === 'pace') return geo.pace ? 'pace' : 'level';
+    if (c === 'slope') return geo.hasEle ? 'slope' : 'level';
+    return TRACK_COLORS.includes(c) ? c : 'level';
+  }
+  const paceOn = () => trackMode() === 'pace';
+  const slopeOn = () => trackMode() === 'slope';
   // Couleur du rythme à la distance d (km)
   function paceColorAt(d) {
     const P = geo.P;
@@ -367,10 +374,9 @@
   const hex6 = (c) => { const m = /^#([\da-f])([\da-f])([\da-f])$/i.exec(c || ''); return m ? `#${m[1]}${m[1]}${m[2]}${m[2]}${m[3]}${m[3]}` : (/^#[\da-f]{6}$/i.test(c || '') ? c : '#ffa45c'); };
   function trackColor() { return hex6(rawTrackColor()); }
   function rawTrackColor() {
-    const c = opts.trackColor;
+    const m = trackMode(), c = m === 'pace' || m === 'slope' ? 'level' : m;
     if (c === 'level') return R.level === 'noir' ? (opts.bg === 'sombre' ? '#f4f4f0' : '#111111') : (SITE.levelColor(R.level) || SITE.accent);
     if (c === 'accent') return SITE.accent;
-    if (c === 'custom') return opts.customColor;
     return c;
   }
 
@@ -1147,8 +1153,9 @@
     const swatch = (c) => {
       const col = c === 'level' ? (SITE.levelColor(R.level) || SITE.accent) : c === 'accent' ? SITE.accent : c;
       const title = c === 'level' ? 'Couleur du niveau IBP' : c === 'accent' ? 'Couleur du site' : c;
-      return `<label class="sh-swatch" title="${title}"><input type="radio" name="trackColor" value="${c}" ${o.trackColor === c ? 'checked' : ''}><span style="--sw:${col}"></span><span class="visually-hidden">${title}</span></label>`;
+      return `<label class="sh-swatch" title="${title}"><input type="radio" name="trackColor" value="${c}" ${trackMode() === c ? 'checked' : ''}><span style="--sw:${col}"></span><span class="visually-hidden">${title}</span></label>`;
     };
+    const ramp = (c, title, bg) => `<label class="sh-swatch sh-swatch--ramp" title="${title}"><input type="radio" name="trackColor" value="${c}" ${trackMode() === c ? 'checked' : ''}><span style="--sw:${bg}"></span><em>${c === 'pace' ? 'Rythme' : 'Pente'}</em><span class="visually-hidden">${title}</span></label>`;
     return `
       <div class="sh-tabs" role="tablist" aria-label="Type de partage">
         <button type="button" role="tab" class="sh-tab" data-mode="image" aria-selected="${o.mode === 'image'}">${svg('image')}Image</button>
@@ -1183,14 +1190,13 @@
       </fieldset>
       <fieldset class="sh-group" data-group="trace"><legend>Trace</legend>
         <div class="sh-swatches">
+          ${geo.pace ? ramp('pace', 'Selon le rythme', `linear-gradient(90deg,${PACE_RAMP.map(([u, c]) => `rgb(${c}) ${Math.round(u * 100)}%`).join(',')})`) : ''}
+          ${geo.hasEle ? ramp('slope', 'Selon la pente', `linear-gradient(90deg,${SLOPES.map(([, c]) => c).join(',')})`) : ''}
           ${TRACK_COLORS.map(swatch).join('')}
-          <label class="sh-swatch sh-swatch--custom" title="Autre couleur"><input type="radio" name="trackColor" value="custom" ${o.trackColor === 'custom' ? 'checked' : ''}><span style="--sw:${esc(o.customColor)}"></span><input type="color" id="sh-custom" value="${esc(o.customColor)}" aria-label="Choisir une couleur"></label>
         </div>
         <label class="sh-range">Épaisseur <input type="range" id="sh-width" min="4" max="22" step="1" value="${o.width}"><output>${o.width}</output></label>
         <div class="sh-chips">
           ${chip('glow', '1', 'Lueur', o.glow, 'checkbox')}
-          ${geo.pace ? chip('pace', '1', 'Couleur selon le rythme', o.pace, 'checkbox') : ''}
-          ${geo.hasEle ? chip('slope', '1', 'Couleur selon la pente', slopeOn(), 'checkbox') : ''}
         </div>
       </fieldset>
       <fieldset class="sh-group" data-group="stats"><legend>Chiffres affichés</legend>
@@ -1243,11 +1249,8 @@
     else if (n === 'sh-solid') opts.solid = el.value;
     else if (n === 'sh-dim') { opts.dim = +el.value; el.nextElementSibling.textContent = `${el.value} %`; }
     else if (n === 'trackColor') opts.trackColor = el.value;
-    else if (n === 'sh-custom') { opts.customColor = el.value; opts.trackColor = 'custom'; const r = $('input[name="trackColor"][value="custom"]', dlg); r.checked = true; r.nextElementSibling.style.setProperty('--sw', el.value); }
     else if (n === 'sh-width') { opts.width = +el.value; el.nextElementSibling.textContent = el.value; }
     else if (n === 'glow') opts.glow = el.checked;
-    else if (n === 'slope') { opts.slope = el.checked; if (el.checked && opts.pace) { opts.pace = false; const c = $('input[name="pace"]', dlg); if (c) c.checked = false; } }
-    else if (n === 'pace') { opts.pace = el.checked; if (el.checked) { opts.slope = false; const c = $('input[name="slope"]', dlg); if (c) c.checked = false; } }
     else if (n === 'stats') opts.stats = $$('input[name="stats"]:checked', dlg).map((i) => i.value);
     else if (n === 'show') opts.show = $$('input[name="show"]:checked', dlg).map((i) => i.value);
     else if (n === 'textTheme') opts.textTheme = el.value;
@@ -1343,7 +1346,7 @@
     canvas = $('.sh-canvas', dlg);
     ctx = canvas.getContext('2d');
     dlg.addEventListener('change', onChange);
-    dlg.addEventListener('input', (e) => { if (['sh-dim', 'sh-width', 'sh-solid', 'sh-custom'].includes(e.target.id)) onChange(e); });
+    dlg.addEventListener('input', (e) => { if (['sh-dim', 'sh-width', 'sh-solid'].includes(e.target.id)) onChange(e); });
     dlg.addEventListener('click', onClick);
     dlg.addEventListener('close', () => { stopAnimation(); destroy3d(); ready = null; document.documentElement.classList.remove('sh-open'); });
   }
@@ -1358,6 +1361,9 @@
     geo = prepareTrack(track);
     const saved = store.get();
     opts = { ...DEFAULTS, ...saved };
+    // Anciens réglages : couleur libre ou cases « rythme / pente » → nouveau choix unique, rythme par défaut
+    if (!saved.tc2) { opts.trackColor = saved.slope && !saved.pace ? 'slope' : 'pace'; opts.tc2 = 1; }
+    delete opts.customColor; delete opts.pace; delete opts.slope;
     if (opts.bg === 'blog' && !(R.blog && R.blog.image)) opts.bg = 'plan';
     if (opts.bg === 'perso' && !userPhoto) opts.bg = 'plan';
     bgKey = ''; bgCanvas = null; blogPhoto = null; lastBlob = null; lastKey = ''; ready = null;
