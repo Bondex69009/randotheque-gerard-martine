@@ -178,11 +178,11 @@
     const u = v.map((x) => (x - lo) / (hi - lo));
     return { v, u, color: u.map(paceRgb), lo, hi };
   }
-  // Choix de la trace : « pace » (rythme), « slope » (pente) ou l'une des couleurs imposées (pas de couleur libre)
+  // Choix de la trace : « pace » (rythme, seul dégradé proposé) ou l'une des couleurs imposées (pas de couleur libre)
   function trackMode() {
     const c = opts.trackColor;
     if (c === 'pace') return geo.pace ? 'pace' : 'level';
-    if (c === 'slope') return geo.hasEle ? 'slope' : 'level';
+    if (c === 'slope') return geo.pace ? 'pace' : 'level'; // ancienne option « pente », retirée
     return TRACK_COLORS.includes(c) ? c : 'level';
   }
   const paceOn = () => trackMode() === 'pace';
@@ -1155,7 +1155,7 @@
       const title = c === 'level' ? 'Couleur du niveau IBP' : c === 'accent' ? 'Couleur du site' : c;
       return `<label class="sh-swatch" title="${title}"><input type="radio" name="trackColor" value="${c}" ${trackMode() === c ? 'checked' : ''}><span style="--sw:${col}"></span><span class="visually-hidden">${title}</span></label>`;
     };
-    const ramp = (c, title, bg) => `<label class="sh-swatch sh-swatch--ramp" title="${title}"><input type="radio" name="trackColor" value="${c}" ${trackMode() === c ? 'checked' : ''}><span style="--sw:${bg}"></span><em>${c === 'pace' ? 'Rythme' : 'Pente'}</em><span class="visually-hidden">${title}</span></label>`;
+    const ramp = (c, title, bg) => `<label class="sh-swatch sh-swatch--ramp" title="${title}"><input type="radio" name="trackColor" value="${c}" ${trackMode() === c ? 'checked' : ''}><span style="--sw:${bg}"></span><em>Rythme</em><span class="visually-hidden">${title}</span></label>`;
     return `
       <div class="sh-tabs" role="tablist" aria-label="Type de partage">
         <button type="button" role="tab" class="sh-tab" data-mode="image" aria-selected="${o.mode === 'image'}">${svg('image')}Image</button>
@@ -1191,7 +1191,6 @@
       <fieldset class="sh-group" data-group="trace"><legend>Trace</legend>
         <div class="sh-swatches">
           ${geo.pace ? ramp('pace', 'Selon le rythme', `linear-gradient(90deg,${PACE_RAMP.map(([u, c]) => `rgb(${c}) ${Math.round(u * 100)}%`).join(',')})`) : ''}
-          ${geo.hasEle ? ramp('slope', 'Selon la pente', `linear-gradient(90deg,${SLOPES.map(([, c]) => c).join(',')})`) : ''}
           ${TRACK_COLORS.map(swatch).join('')}
         </div>
         <label class="sh-range">Épaisseur <input type="range" id="sh-width" min="4" max="22" step="1" value="${o.width}"><output>${o.width}</output></label>
@@ -1362,7 +1361,7 @@
     const saved = store.get();
     opts = { ...DEFAULTS, ...saved };
     // Anciens réglages : couleur libre ou cases « rythme / pente » → nouveau choix unique, rythme par défaut
-    if (!saved.tc2) { opts.trackColor = saved.slope && !saved.pace ? 'slope' : 'pace'; opts.tc2 = 1; }
+    if (!saved.tc2) { opts.trackColor = 'pace'; opts.tc2 = 1; }
     delete opts.customColor; delete opts.pace; delete opts.slope;
     if (opts.bg === 'blog' && !(R.blog && R.blog.image)) opts.bg = 'plan';
     if (opts.bg === 'perso' && !userPhoto) opts.bg = 'plan';
