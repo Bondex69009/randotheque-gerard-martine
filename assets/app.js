@@ -87,6 +87,8 @@
   const communeOf = (r) => r.commune || 'Inconnue';
   let state = defaults();
   let openId = null;
+  let vsIds = [];   // « #vs=id1,id2 » : duel ouvert
+  let CMP = null;   // comparateur (assets/compare.js)
 
   function readHash() {
     const p = new URLSearchParams(location.hash.slice(1));
@@ -103,6 +105,7 @@
     if (p.get('view') === 'map') s.view = 'map';
     state = s;
     openId = p.get('rando');
+    vsIds = (p.get('vs') || '').split(',').filter(Boolean);
   }
   function writeHash() {
     const p = new URLSearchParams();
@@ -114,6 +117,8 @@
     if (state.sort !== 'date-desc') p.set('sort', state.sort);
     if (state.view !== 'grid') p.set('view', state.view);
     if (openId && byId.has(openId)) p.set('rando', openId);
+    const vs = CMP && CMP.hashIds();
+    if (vs) p.set('vs', vs.join(','));
     const h = p.toString();
     history.replaceState(null, '', h ? `#${h}` : location.pathname + location.search);
   }
@@ -446,6 +451,7 @@
         ${shapeSvg(r)}
         <div class="card__ibp">${ibpBadge(r)}</div>
         <div class="card__flags">${flags.join('')}</div>
+        ${CMP ? CMP.cardButton(r) : ''}
       </div>
       <div class="card__body">
         <h3 class="card__title"><a class="card__link" href="#rando=${r.id}" data-open="${r.id}">${esc(r.name)}</a></h3>
@@ -1280,6 +1286,7 @@
           <div class="actions">
             <button type="button" class="btn btn--primary btn--block" data-share="${r.id}" title="Image ou vidéo de la rando à partager sur les réseaux et messageries">${icon('share')}<span class="btn__label">Partager la rando</span><span class="btn__meta">image ou vidéo</span></button>
             <button type="button" class="btn btn--fly btn--block" data-fly="${r.id}" title="Rejoue la randonnée en survol 3D au-dessus du relief">${icon('play')}<span class="btn__label">Survol 3D animé</span><span class="btn__meta">relief + profil</span></button>
+            ${CMP ? CMP.detailButton(r) : ''}
             <a class="btn btn--primary btn--block" href="${encodeURI(r.file)}" download="${esc(fileName)}">${icon('download')}Télécharger le GPX${r.fileSize ? ` <span class="btn__meta">(${fmtSize(r.fileSize)})</span>` : ''}</a>
             ${accessButton(r)}
             ${albumButtons(r)}
@@ -1826,6 +1833,7 @@
     update();
     if (openId && byId.has(openId)) openDetail(openId, { push: false });
     else if (!(openId && extById.has(openId))) closeDetail();
+    if (CMP && vsIds.length === 2 && !CMP.isOpen()) CMP.openFromHash(vsIds);
   });
 
   // ------------------------------------------------------------ Démarrage
@@ -1833,11 +1841,19 @@
   document.body.insertAdjacentHTML('beforeend', `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
     <linearGradient id="spark-grad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${cssVar('--c-cyan')}" stop-opacity=".28"/><stop offset="1" stop-color="${cssVar('--c-cyan')}" stop-opacity="0"/></linearGradient></defs></svg>`);
   readHash();
+  // Comparateur « VS » : seulement les randos du site (pas celles de « Chercher aussi sur »)
+  if (window.RTCompareInit) {
+    CMP = window.RTCompareInit({
+      getR: (id) => byId.get(id), esc, icon, fmtKm, fmtM, fmtDur, fmtDate, nf0, nf1, placeOf, levelLabel, ibpBadge, shapeSvg,
+      openDetail: (id) => openDetail(id), closeDetail, onChange: () => writeHash(),
+    });
+  }
   buildFilters();
   syncFilterInputs();
   renderHeroStats();
   update();
   if (openId) openDetail(openId, { push: false });
+  else if (CMP && vsIds.length === 2) CMP.openFromHash(vsIds);
 
   // Ouverture d'une fiche externe par assets/ailleurs.js
   window.RTExternal = {
