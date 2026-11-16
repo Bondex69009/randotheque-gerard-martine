@@ -483,5 +483,428 @@
     }, { once: true });
   }
 
-  window.RTFlyover = { open };
+  // ---------------------------------------------------------------- Duel : deux randos en même temps sur la même carte
+  // Chaque randonneur avance selon son temps de marche estimé (DIN 33466 : plus lent en montée),
+  // recalé sur la durée de sa fiche : à la même minute, on voit où en est chacun.
+  function timeline(T, durationMin) {
+    const tm = new Float64Array(T.n);
+    for (let i = 1; i < T.n; i++) {
+      const h = (T.km[i] - T.km[i - 1]) / 4;
+      const dz = T.sm[i] - T.sm[i - 1];
+      const v = dz > 0 ? dz / 300 : -dz / 500;
+      tm[i] = tm[i - 1] + (Math.max(h, v) + Math.min(h, v) / 2) * 60;
+    }
+    const end = tm[T.n - 1] || 1;
+    const k = durationMin ? durationMin / end : 1;
+    for (let i = 0; i < T.n; i++) tm[i] *= k;
+    const kmAt = (t) => {
+      if (t <= 0) return 0;
+      if (t >= tm[T.n - 1]) return T.total;
+      let lo = 0, hi = T.n - 1;
+      while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (tm[mid] < t) lo = mid; else hi = mid; }
+      const f = tm[hi] > tm[lo] ? (t - tm[lo]) / (tm[hi] - tm[lo]) : 0;
+      return T.km[lo] + (T.km[hi] - T.km[lo]) * f;
+    };
+    return { tm, end: tm[T.n - 1], kmAt };
+  }
+  const fmtClock = (min) => { const m = Math.round(min); const h = Math.floor(m / 60); return h ? `${h} h ${String(m % 60).padStart(2, '0')}` : `${m} min`; };
+  const distKm = (a, b) => {
+    const R = 6371, toR = Math.PI / 180;
+    const dLat = (b[1] - a[1]) * toR, dLon = (b[0] - a[0]) * toR;
+    const x = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * toR) * Math.cos(b[1] * toR) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(x));
+  };
+
+  function duelShellHtml(R, far) {
+    const card = (r, i) => `
+      <div class="fo__card fo-duel__hud" style="--fo-c:${r.color}">
+        <p class="fo-duel__who"><i aria-hidden="true"></i><span>${esc(r.title)}</span><em class="fo-duel__done" id="fo-done-${i}" hidden>Arrivée</em></p>
+        <dl>
+          <div><dt>Distance</dt><dd><b id="fo-d-${i}">0,0</b> <small>/ ${nf1.format(r.T.total)} km</small></dd></div>
+          <div><dt>Altitude</dt><dd><b id="fo-e-${i}">–</b> <small>m</small></dd></div>
+          <div><dt>Dénivelé +</dt><dd><b id="fo-u-${i}">0</b> <small>m</small></dd></div>
+        </dl>
+      </div>`;
+    return `
+      <div class="fo__map" id="fo-map" role="region" aria-label="Carte en relief des deux parcours"></div>
+      <div class="fo__loading" id="fo-loading"><span class="fo__spinner" aria-hidden="true"></span>Chargement du relief…</div>
+      <header class="fo__top">
+        <div class="fo__card fo__title">
+          <p class="fo__eyebrow">Survol 3D · duel</p>
+          <h2 class="fo__name" id="fo-title">${R.map((r) => esc(r.title)).join(' <span class="fo-duel__vs">vs</span> ')}</h2>
+          <p class="fo__place">Départ en même temps, au rythme du temps de marche estimé${far ? ` · ${nf0.format(far)} km entre les deux` : ''}</p>
+        </div>
+        <button type="button" class="fo__btn fo__btn--round" data-fo="close" aria-label="Fermer le survol 3D">${ICON.close}</button>
+      </header>
+      <div class="fo-duel__huds" aria-live="off">${R.map(card).join('')}</div>
+      <div class="fo__bottom">
+        <div class="fo__bar">
+          <button type="button" class="fo__btn fo__btn--play" data-fo="play" aria-label="Lecture">${ICON.play}</button>
+          <button type="button" class="fo__btn fo__btn--round" data-fo="replay" aria-label="Recommencer depuis le départ" title="Recommencer">${ICON.replay}</button>
+          <div class="fo__speed" role="group" aria-label="Vitesse de l'animation">
+            ${[0.5, 1, 2, 4].map((s) => `<button type="button" class="fo__chip" data-speed="${s}" aria-pressed="${s === 1}">×${String(s).replace('.', ',')}</button>`).join('')}
+          </div>
+          <p class="fo-duel__clock"><small>Temps de marche</small><b id="fo-clock">0 min</b></p>
+          <span class="fo__spacer"></span>
+          <div class="fo__speed fo-duel__cams" role="group" aria-label="Caméra">
+            <button type="button" class="fo__chip" data-cam="both" aria-pressed="true" title="Cadrer les deux randonneurs">Les deux</button>
+            ${R.map((r, i) => `<button type="button" class="fo__chip fo-duel__cam" data-cam="${i}" aria-pressed="false" style="--fo-c:${r.color}" title="Suivre ${esc(r.title)}"><i aria-hidden="true"></i><span>Suivre</span></button>`).join('')}
+          </div>
+          <button type="button" class="fo__btn fo__btn--pill" data-fo="base" aria-label="Changer de fond de carte">${ICON.layers}<span id="fo-base-label">Carte</span></button>
+        </div>
+        <div class="fo__profile" id="fo-profile" role="slider" tabindex="0" aria-label="Temps de marche écoulé"
+             aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0 min"></div>
+      </div>`;
+  }
+
+  // Profils des deux randos sur un axe commun du temps de marche
+  function duelProfileView(box, R, totalT, onSeek) {
+    let W = 0, H = 0, x, mask, cur, dots = [], ys = [], lastT = 0;
+    const L = 38, RR = 10, TOP = 14, B = 18;
+    function render() {
+      W = Math.round(box.clientWidth); H = Math.round(box.clientHeight);
+      if (W < 50 || H < 40) return;
+      let lo = Infinity, hi = -Infinity;
+      for (const r of R) for (let i = 0; i < r.T.n; i++) { lo = Math.min(lo, r.T.ele[i]); hi = Math.max(hi, r.T.ele[i]); }
+      const pad = Math.max(15, (hi - lo) * 0.1);
+      const min = Math.floor((lo - pad) / 10) * 10, max = Math.ceil((hi + pad * 0.5) / 10) * 10;
+      x = (t) => L + (t / totalT) * (W - L - RR);
+      const y = (e) => TOP + (1 - (e - min) / (max - min)) * (H - TOP - B);
+      const base = H - B;
+      ys = R.map((r) => (t) => y(r.S.ele(r.tl.kmAt(t))));
+      const every = (r) => Math.max(1, Math.round(r.T.n / (W * 1.5)));
+      const lines = R.map((r, k) => {
+        const pts = [];
+        for (let i = 0; i < r.T.n; i += every(r)) pts.push(`${x(r.tl.tm[i]).toFixed(1)},${y(r.T.ele[i]).toFixed(1)}`);
+        pts.push(`${x(r.tl.end).toFixed(1)},${y(r.T.ele[r.T.n - 1]).toFixed(1)}`);
+        return `<path d="M${pts.join('L')}L${x(r.tl.end).toFixed(1)},${base}L${L},${base}Z" fill="${r.color}" fill-opacity="0.16"/>
+          <path class="fo-duel__line" d="M${pts.join('L')}" stroke="${r.color}"/>
+          <line x1="${x(r.tl.end).toFixed(1)}" x2="${x(r.tl.end).toFixed(1)}" y1="${TOP}" y2="${base}" stroke="${r.color}" stroke-dasharray="3 3" stroke-opacity="0.8"/>`;
+      }).join('');
+      const hStep = [15, 30, 60, 120, 180].find((s) => totalT / s <= (W - L - RR) / 60) || 240;
+      let ticks = '';
+      for (let t = 0; t <= totalT + 1e-6; t += hStep) ticks += `<line class="fo-p-tick" x1="${x(t)}" x2="${x(t)}" y1="${base}" y2="${base + 4}"/><text class="fo-p-axis" x="${x(t)}" y="${H - 3}" text-anchor="middle">${t ? fmtClock(t).replace(' ', '') : '0'}</text>`;
+      box.innerHTML = `
+        <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true">
+          <text class="fo-p-axis" x="${L - 5}" y="${y(max) + 9}" text-anchor="end">${nf0.format(max)}</text>
+          <text class="fo-p-axis" x="${L - 5}" y="${base}" text-anchor="end">${nf0.format(min)}</text>
+          ${lines}
+          <line class="fo-p-base" x1="${L}" x2="${W - RR}" y1="${base}" y2="${base}"/>
+          ${ticks}
+          <rect class="fo-p-mask" id="fo-mask" x="${L}" y="0" width="${W - L - RR}" height="${base}"/>
+          <line class="fo-duel__cur" id="fo-cur" x1="${L}" x2="${L}" y1="${TOP - 6}" y2="${base}"/>
+          ${R.map((r, i) => `<circle class="fo-p-dot" id="fo-dot-${i}" style="fill:${r.color}" cx="${L}" cy="${y(r.T.ele[0])}" r="5"/>`).join('')}
+        </svg>`;
+      mask = box.querySelector('#fo-mask'); cur = box.querySelector('#fo-cur');
+      dots = R.map((_, i) => box.querySelector(`#fo-dot-${i}`));
+      set(lastT);
+    }
+    function set(t) {
+      lastT = t;
+      if (!mask) return;
+      const px = x(t);
+      mask.setAttribute('x', px.toFixed(1)); mask.setAttribute('width', Math.max(0, W - RR - px).toFixed(1));
+      cur.setAttribute('x1', px.toFixed(1)); cur.setAttribute('x2', px.toFixed(1));
+      R.forEach((r, i) => {
+        const tt = Math.min(t, r.tl.end);
+        dots[i].setAttribute('cx', x(tt).toFixed(1)); dots[i].setAttribute('cy', ys[i](tt).toFixed(1));
+      });
+    }
+    const toT = (clientX) => {
+      const r = box.getBoundingClientRect();
+      return clamp(((clientX - r.left - L) / (r.width - L - RR)) * totalT, 0, totalT);
+    };
+    let dragging = false;
+    box.addEventListener('pointerdown', (e) => { dragging = true; box.setPointerCapture(e.pointerId); onSeek(toT(e.clientX)); });
+    box.addEventListener('pointermove', (e) => { if (dragging) onSeek(toT(e.clientX)); });
+    const stop = () => { dragging = false; };
+    box.addEventListener('pointerup', stop);
+    box.addEventListener('pointercancel', stop);
+    const ro = new ResizeObserver(() => render());
+    ro.observe(box);
+    render();
+    return { set, destroy: () => ro.disconnect() };
+  }
+
+  function duel(o) {
+    if (!ML) throw new Error('MapLibre indisponible');
+    const R = o.racers.slice(0, 2).map((r) => {
+      const T = prepare(r.track.map((p) => p.slice()), r.dplus);
+      return { ...r, T, S: sampler(T), tl: timeline(T, r.durationMin) };
+    });
+    const totalT = Math.max(...R.map((r) => r.tl.end));
+    const maxKm = Math.max(...R.map((r) => r.T.total));
+    const fr = R.every((r) => r.inFrance);
+    const bgColor = cssVar('--c-bg', '#0b0f0a');
+    const gap = distKm(R[0].S.pos(0), R[1].S.pos(0));
+
+    const dlg = document.createElement('dialog');
+    dlg.className = 'fo fo--duel';
+    dlg.setAttribute('aria-labelledby', 'fo-title');
+    dlg.innerHTML = duelShellHtml(R, gap >= 15 ? gap : 0);
+    document.body.appendChild(dlg);
+    dlg.showModal();
+    const $ = (s) => dlg.querySelector(s);
+    $('#fo-profile').setAttribute('aria-valuemax', String(Math.round(totalT)));
+
+    const baseDuration = clamp(22 + maxKm * 2.6, 28, 90);
+    const zoomOne = clamp(15.6 - Math.log2(Math.max(maxKm, 1) / 4) * 0.45, 13.3, 15.6);
+    const pitch = 60;
+    const coords = R.map((r) => Array.from({ length: r.T.n }, (_, i) => [r.T.lon[i], r.T.lat[i]]));
+    const all = coords.flat();
+    const bounds = all.reduce((b, c) => b.extend(c), new ML.LngLatBounds(all[0], all[0]));
+
+    const sources = {
+      base: { type: 'raster', tileSize: 256, ...BASES.photo(fr) },
+      dem: DEM,
+      hs: (({ attribution, ...rest }) => rest)(DEM),
+    };
+    const layers = [
+      { id: 'bg', type: 'background', paint: { 'background-color': bgColor } },
+      { id: 'base', type: 'raster', source: 'base', paint: { 'raster-fade-duration': 200 } },
+      { id: 'hs', type: 'hillshade', source: 'hs', paint: { 'hillshade-exaggeration': 0.35, 'hillshade-shadow-color': 'rgba(0,0,0,0.55)', 'hillshade-highlight-color': 'rgba(255,255,255,0.15)' } },
+    ];
+    const lc = { 'line-cap': 'round', 'line-join': 'round' };
+    R.forEach((r, i) => {
+      sources[`route-${i}`] = { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords[i] } } };
+      sources[`done-${i}`] = { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [coords[i][0], coords[i][0]] } } };
+      layers.push(
+        { id: `route-casing-${i}`, type: 'line', source: `route-${i}`, layout: lc, paint: { 'line-color': '#000', 'line-opacity': 0.3, 'line-width': 5 } },
+        { id: `route-${i}`, type: 'line', source: `route-${i}`, layout: lc, paint: { 'line-color': r.color, 'line-opacity': 0.75, 'line-width': 2.2, 'line-dasharray': [1.5, 1.5] } },
+      );
+    });
+    R.forEach((r, i) => layers.push(
+      { id: `done-glow-${i}`, type: 'line', source: `done-${i}`, layout: lc, paint: { 'line-color': r.color, 'line-opacity': 0.45, 'line-width': 14, 'line-blur': 8 } },
+      { id: `done-casing-${i}`, type: 'line', source: `done-${i}`, layout: lc, paint: { 'line-color': bgColor, 'line-width': 7.5 } },
+      { id: `done-${i}`, type: 'line', source: `done-${i}`, layout: lc, paint: { 'line-color': r.color, 'line-width': 5 } },
+    ));
+
+    let base = 'photo';
+    let map;
+    try {
+      map = new ML.Map({
+        container: $('#fo-map'),
+        style: {
+          version: 8, sources, layers,
+          terrain: { source: 'dem', exaggeration: 1.5 },
+          sky: {
+            'sky-color': '#5b9bd5', 'horizon-color': '#d8e6f2', 'fog-color': '#c9d6e3',
+            'sky-horizon-blend': 0.6, 'horizon-fog-blend': 0.7, 'fog-ground-blend': 0.25, 'atmosphere-blend': 0.8,
+          },
+        },
+        bounds, fitBoundsOptions: { padding: 60 },
+        pitch: 40, maxPitch: 80,
+        keyboard: false, attributionControl: { compact: true },
+        fadeDuration: 150,
+      });
+    } catch (e) {
+      $('#fo-loading').innerHTML = 'Le survol 3D nécessite WebGL, indisponible sur cet appareil.';
+      dlg.addEventListener('close', () => dlg.remove(), { once: true });
+      return;
+    }
+    map.addControl(new ML.NavigationControl({ visualizePitch: true, showZoom: true }), 'top-right');
+
+    const mk = (html, cls, at, anchor = 'bottom', c) => {
+      const el = document.createElement('div'); el.className = cls; el.innerHTML = html;
+      if (c) el.style.setProperty('--fo-c', c);
+      return new ML.Marker({ element: el, anchor }).setLngLat(at).addTo(map);
+    };
+    R.forEach((r) => {
+      mk('<span>D</span>', 'fo-flag fo-duel__flag', r.S.pos(0), 'bottom', r.color).getElement().title = `Départ : ${r.title}`;
+      if (!r.loop) mk('<span>A</span>', 'fo-flag fo-duel__flag fo-duel__flag--end', r.S.pos(r.T.total), 'bottom', r.color).getElement().title = `Arrivée : ${r.title}`;
+      r.walker = mk('<span class="fo-walker__pulse"></span><span class="fo-walker__dot"></span>', 'fo-walker', r.S.pos(0), 'center', r.color);
+    });
+
+    // État : horloge commune (minutes de marche), caméra « les deux » ou qui suit l'un des deux
+    let t = 0, speed = 1, playing = false, phase = 'intro', camMode = 'both', follow = true, raf = 0, last = 0, hudAt = 0;
+    const kms = () => R.map((r) => r.tl.kmAt(t));
+    let cam = null;
+    const playBtn = $('[data-fo="play"]');
+    const setPlayUi = () => { playBtn.innerHTML = playing ? ICON.pause : ICON.play; playBtn.setAttribute('aria-label', playing ? 'Pause' : 'Lecture'); };
+    const setCamUi = () => dlg.querySelectorAll('[data-cam]').forEach((b) => b.setAttribute('aria-pressed', String(follow && String(camMode) === b.dataset.cam)));
+
+    const profile = duelProfileView($('#fo-profile'), R, totalT, (tt) => seek(tt));
+    const padBottom = () => {
+      const h = Math.round($('.fo__bottom').getBoundingClientRect().height);
+      dlg.style.setProperty('--fo-bottom-h', `${h}px`);
+      const hud = matchMedia('(max-width: 640px)').matches ? $('.fo-duel__huds').getBoundingClientRect().height + 8 : 0;
+      return Math.round(h * 0.85 + hud);
+    };
+
+    // Cible de la caméra : centre, cap et zoom
+    function camTarget() {
+      const ds = kms();
+      if (camMode === 'both') {
+        const ps = R.map((r, i) => r.S.pos(ds[i]));
+        const b = new ML.LngLatBounds(ps[0], ps[0]).extend(ps[1]);
+        // un peu de marge autour des randonneurs, même quand ils sont côte à côte
+        const span = 0.004;
+        b.extend([b.getWest() - span, b.getSouth() - span]).extend([b.getEast() + span, b.getNorth() + span]);
+        const bearing = cam ? cam.b : bearingOf(R[0].S.pos(0), R[0].S.pos(Math.min(R[0].T.total, 0.5)));
+        const c = map.cameraForBounds(b, { padding: { top: 120, bottom: 80, left: 60, right: 60 }, bearing, pitch: 0 });
+        const z = c ? clamp(c.zoom + 0.6, 7, zoomOne) : zoomOne;
+        const ctr = c ? [c.center.lng, c.center.lat] : ps[0];
+        return { c: ctr, b: bearing, z };
+      }
+      const r = R[camMode], d = ds[camMode];
+      const look = clamp(r.T.total * 0.04, 0.15, 0.6);
+      return { c: r.S.pos(d), b: bearingOf(r.S.pos(Math.max(0, d - look * 0.3)), r.S.pos(Math.min(r.T.total, d + look))), z: zoomOne };
+    }
+    function placeCamera(dt, snap) {
+      if (!follow) return;
+      const tg = camTarget();
+      if (snap || !cam) cam = { ...tg };
+      else {
+        const kc = 1 - Math.exp(-dt * 3), kb = 1 - Math.exp(-dt * 1.2), kz = 1 - Math.exp(-dt * 1.5);
+        cam.c = [cam.c[0] + (tg.c[0] - cam.c[0]) * kc, cam.c[1] + (tg.c[1] - cam.c[1]) * kc];
+        cam.z += (tg.z - cam.z) * kz;
+        if (camMode === 'both') cam.b += dt * 3; // lente rotation pour voir le relief
+        else cam.b += angDiff(cam.b, tg.b) * kb;
+      }
+      map.jumpTo({ center: cam.c, bearing: cam.b, zoom: cam.z, pitch });
+    }
+    function updateHud(force) {
+      const now = performance.now();
+      if (!force && now - hudAt < 90) return;
+      hudAt = now;
+      const ds = kms();
+      R.forEach((r, i) => {
+        $(`#fo-d-${i}`).textContent = nf1.format(ds[i]);
+        $(`#fo-e-${i}`).textContent = nf0.format(r.S.ele(ds[i]));
+        $(`#fo-u-${i}`).textContent = nf0.format(r.S.up(ds[i]));
+        const done = t >= r.tl.end - 1e-6;
+        const el = $(`#fo-done-${i}`);
+        if (el.hidden === done) { el.hidden = !done; el.textContent = `Arrivée en ${fmtClock(r.tl.end)}`; }
+      });
+      $('#fo-clock').textContent = fmtClock(t);
+      const pr = $('#fo-profile');
+      pr.setAttribute('aria-valuenow', String(Math.round(t)));
+      pr.setAttribute('aria-valuetext', `${fmtClock(t)} de marche`);
+    }
+    function draw(force) {
+      const ds = kms();
+      R.forEach((r, i) => {
+        map.getSource(`done-${i}`)?.setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: r.S.coordsTo(Math.max(ds[i], 1e-4)) } });
+        r.walker.setLngLat(r.S.pos(ds[i]));
+      });
+      profile.set(t);
+      updateHud(force);
+    }
+    function frame(now) {
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min(0.1, (now - (last || now)) / 1000);
+      last = now;
+      if (phase === 'run' && playing) {
+        t = Math.min(totalT, t + (dt * totalT * speed) / baseDuration);
+        draw();
+        placeCamera(dt);
+        if (t >= totalT) finish();
+      } else if (phase === 'done' && playing && !map.isMoving()) {
+        map.setBearing(map.getBearing() + dt * 6);
+      }
+    }
+    function finish() {
+      phase = 'outro';
+      updateHud(true);
+      map.fitBounds(bounds, { padding: { top: 120, left: 50, right: 50, bottom: padBottom() + 20 }, pitch: 55, bearing: cam ? cam.b : 0, duration: reduceMotion() ? 0 : 3500, essential: true });
+      map.once('moveend', () => { if (phase === 'outro') phase = 'done'; });
+    }
+    function startRun() { phase = 'run'; follow = true; setCamUi(); placeCamera(0, true); }
+    function intro() {
+      cam = null;
+      const tg = camTarget();
+      cam = { ...tg };
+      if (reduceMotion()) { startRun(); playing = false; setPlayUi(); draw(true); return; }
+      phase = 'intro';
+      map.flyTo({ center: tg.c, bearing: tg.b, zoom: tg.z, pitch, duration: 3200, curve: 1.3, essential: true });
+      map.once('moveend', () => { if (phase === 'intro') startRun(); });
+    }
+    function seek(tt) {
+      map.stop();
+      t = clamp(tt, 0, totalT);
+      phase = 'run';
+      if (t >= totalT) { draw(true); finish(); return; }
+      draw(true);
+      if (follow) placeCamera(0, true);
+    }
+    function toggle() {
+      if ((phase === 'done' || phase === 'outro') && t >= totalT) { replay(); return; }
+      playing = !playing; setPlayUi();
+      if (playing && phase === 'run' && follow) placeCamera(0, true);
+    }
+    function replay() {
+      map.stop();
+      t = 0; draw(true);
+      follow = true; setCamUi();
+      playing = true; setPlayUi();
+      intro();
+    }
+
+    map.on('movestart', (e) => {
+      if (!e.originalEvent) return;
+      if (phase === 'run' || phase === 'intro') { follow = false; setCamUi(); if (phase === 'intro') { map.stop(); phase = 'run'; } }
+      if (phase === 'done') { playing = false; setPlayUi(); }
+    });
+    dlg.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-fo], [data-speed], [data-cam]');
+      if (!b) return;
+      if (b.dataset.speed) {
+        speed = Number(b.dataset.speed);
+        dlg.querySelectorAll('[data-speed]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        return;
+      }
+      if (b.dataset.cam) {
+        camMode = b.dataset.cam === 'both' ? 'both' : Number(b.dataset.cam);
+        follow = true; setCamUi();
+        if (phase === 'done' || phase === 'outro') phase = 'run';
+        map.stop();
+        const tg = camTarget();
+        if (cam && camMode === 'both') tg.b = cam.b;
+        map.easeTo({ center: tg.c, bearing: tg.b, zoom: tg.z, pitch, duration: 900 });
+        cam = { ...tg };
+        return;
+      }
+      const a = b.dataset.fo;
+      if (a === 'close') dlg.close();
+      else if (a === 'play') toggle();
+      else if (a === 'replay') replay();
+      else if (a === 'base') {
+        base = base === 'photo' ? 'plan' : 'photo';
+        map.removeLayer('base'); map.removeSource('base');
+        map.addSource('base', { type: 'raster', tileSize: 256, ...BASES[base](fr) });
+        map.addLayer({ id: 'base', type: 'raster', source: 'base' }, 'hs');
+        $('#fo-base-label').textContent = base === 'photo' ? 'Carte' : 'Satellite';
+      }
+    });
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); toggle(); }
+      else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !e.target.closest('.maplibregl-canvas')) {
+        e.preventDefault(); seek(t + (e.key === 'ArrowRight' ? 1 : -1) * Math.max(1, totalT * 0.02));
+      }
+    });
+
+    map.on('load', () => {
+      $('#fo-loading').hidden = true;
+      map.setPadding({ top: 40, bottom: padBottom(), left: 0, right: 0 });
+      draw(true);
+      playing = !reduceMotion();
+      setPlayUi();
+      setTimeout(intro, 500);
+      raf = requestAnimationFrame(frame);
+    });
+    map.on('error', (e) => { if (!map.loaded() && /style|webgl/i.test(String(e.error?.message))) $('#fo-loading').textContent = 'Carte 3D indisponible.'; });
+    const onResize = () => map.setPadding({ top: 40, bottom: padBottom(), left: 0, right: 0 });
+    window.addEventListener('resize', onResize);
+
+    dlg.addEventListener('close', () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
+      profile.destroy();
+      map.remove();
+      dlg.remove();
+      o.onClose && o.onClose();
+    }, { once: true });
+  }
+
+  window.RTFlyover = { open, duel };
 })();

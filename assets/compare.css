@@ -182,3 +182,6 @@
 @media (prefers-reduced-motion: reduce) { .cmp-tray { animation: none; } .cmp-row__bar i { transition: none; } }
 @media (max-width: 479px) { .cmp__swap-label { display: none; } .cmp__title { font-size: var(--fs-lg); } }
 body:has(.cmp-tray:not([hidden])) { padding-bottom: 6rem; }
+.cmp__fly { align-self: center; padding-inline: var(--space-6); }
+.cmp__fly .icon { width: 1rem; height: 1rem; }
+@media (max-width: 559px) { .cmp__fly { align-self: stretch; } .cmp__fly .btn__meta { display: none; } }

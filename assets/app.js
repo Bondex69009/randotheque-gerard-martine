@@ -1495,17 +1495,40 @@
     }));
     return loadOnce.get(url);
   };
+  const loadFlyover = () => Promise.all([
+    loadAsset(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.css`, true),
+    loadAsset('assets/flyover.css?v=7', true),
+    loadAsset(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`).then(() => loadAsset('assets/flyover.js?v=7')),
+  ]);
+  // Duel en survol 3D : les deux randos du comparateur en même temps, chacune dans sa couleur
+  async function openFlyoverDuel(ids, colors, btn) {
+    const rs = ids.map(getR);
+    if (rs.length < 2 || !rs.every(Boolean)) return;
+    const label = btn && $('.btn__label', btn);
+    const txt = label && label.textContent;
+    if (btn) { btn.disabled = true; if (label) label.textContent = 'Chargement…'; }
+    try {
+      await loadFlyover();
+      const tracks = await Promise.all(rs.map((r) => loadTrack(r.id)));
+      window.RTFlyover.duel({
+        racers: rs.map((r, i) => ({
+          track: tracks[i], title: r.name, color: colors[i], inFrance: !!r.region,
+          loop: r.loop, dplus: r.dplus, durationMin: r.durationMin,
+        })),
+      });
+    } catch (e) {
+      alert('Le survol 3D n\'a pas pu se charger. Vérifiez la connexion internet puis réessayez.');
+    } finally {
+      if (btn) { btn.disabled = false; if (label) label.textContent = txt; }
+    }
+  }
   async function openFlyover(id, btn) {
     const r = getR(id);
     if (!r) return;
     const label = btn && $('.btn__label', btn);
     if (btn) { btn.disabled = true; if (label) label.textContent = 'Chargement…'; }
     try {
-      await Promise.all([
-        loadAsset(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.css`, true),
-        loadAsset('assets/flyover.css?v=5', true),
-        loadAsset(`https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`).then(() => loadAsset('assets/flyover.js?v=5')),
-      ]);
+      await loadFlyover();
       const track = await loadTrack(id);
       stopAudio();
       window.RTFlyover.open({
@@ -1846,6 +1869,7 @@
     CMP = window.RTCompareInit({
       getR: (id) => byId.get(id), esc, icon, fmtKm, fmtM, fmtDur, fmtDate, nf0, nf1, placeOf, levelLabel, ibpBadge, shapeSvg,
       openDetail: (id) => openDetail(id), closeDetail, onChange: () => writeHash(),
+      flyDuel: openFlyoverDuel,
     });
   }
   buildFilters();

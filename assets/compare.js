@@ -177,6 +177,8 @@
           </header>
           <div class="cmp__heroes">${headHtml(a, 'a')}<span class="cmp__vs" aria-hidden="true">VS</span>${headHtml(b, 'b')}</div>
           ${verdictHtml(a, b)}
+          ${ctx.flyDuel ? `<button type="button" class="btn btn--primary cmp__fly" data-cmp-fly title="Les deux randonneurs partent en même temps sur la même carte en relief, chacun dans sa couleur">
+            ${icon('play')}<span class="btn__label">Survol 3D simultané</span><span class="btn__meta">les deux sur la même carte</span></button>` : ''}
           <section class="cmp-panel" aria-labelledby="cmp-profile-title">
             <h3 class="cmp-panel__title" id="cmp-profile-title">Profils altimétriques superposés</h3>
             <div class="cmp-profile" id="cmp-profile"></div>
@@ -272,6 +274,13 @@
         shown = [shown[1], shown[0]];
         if (picked.length === 2 && shown.every((r) => has(r.id))) { picked = shown.map((r) => r.id); save(); paint(); }
         render(); renderProfiles(); onChange && onChange();
+        return;
+      }
+      const fly = e.target.closest('[data-cmp-fly]');
+      if (fly) {
+        const cs = getComputedStyle(document.documentElement);
+        const col = (n, fb) => cs.getPropertyValue(n).trim() || fb;
+        ctx.flyDuel(shown.map((r) => r.id), [col('--cmp-a', '#87f700'), col('--cmp-b', '#01ffff')], fly);
         return;
       }
       const see = e.target.closest('[data-cmp-see]');
