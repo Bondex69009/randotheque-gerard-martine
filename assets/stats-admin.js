@@ -420,10 +420,21 @@
     $('#c-widget').innerHTML = w.total
       ? `<p class="sx-big">${nf0.format(w.total)} <small>affichages du compteur de km sur le blog</small></p>${bars(w.cities.map((r) => [r.k, +r.n]), { max: 6, color: CAT[5] })}`
       : empty('Aucun affichage du compteur sur la période.');
+    // Trafic écarté (robots, faux navigateurs, pays inhabituels, centres de données, administrateur)
+    const RJ = { bot: 'Robots', browser: 'Navigateurs non standard', fake: 'Faux navigateurs', country: 'Pays inhabituels', datacenter: 'Centres de données', admin: 'Administrateur' };
+    const rj = data.rejects || { reasons: [], countries: [], hosts: [] };
+    const kept = data.kpis.visits;
+    const out = rj.reasons.reduce((a, r) => a + r[1], 0);
+    $('#c-rejects').innerHTML = out
+      ? `<p class="sx-big">${nf0.format(out)} <small>pages vues écartées, soit ${nf0.format(pct(out, out + data.kpis.pageviews))} % du trafic reçu</small></p>
+        ${bars(rj.reasons.map(([k, v]) => [RJ[k] || k, v]), { color: CAT[7] })}
+        ${rj.countries.length ? `<h3 class="sx-sub">Pays écartés</h3>${bars(rj.countries.map(([k, v]) => [`${flag(k)} ${countryName(k)}`, v]), { max: 8, color: CAT[7] })}` : ''}
+        ${rj.hosts.length ? `<h3 class="sx-sub">Hébergeurs écartés</h3>${bars(rj.hosts, { max: 8, color: CAT[7] })}` : ''}`
+      : empty(kept ? 'Aucun faux visiteur sur la période.' : undefined);
     const note = $('#sx-geo-note');
-    note.innerHTML = data.geo_ready
-      ? 'Villes : base DB-IP City Lite (CC BY 4.0), installée sur le serveur. <button type="button" class="btn btn--ghost btn--sm" id="sx-geo">Mettre à jour la base des villes</button>'
-      : '<button type="button" class="btn btn--primary btn--sm" id="sx-geo">Installer la base des villes</button> pour voir d\'où viennent les visiteurs (environ 1 minute, à refaire une fois par mois).';
+    note.innerHTML = data.geo_ready && data.asn_ready
+      ? 'Villes et hébergeurs : bases DB-IP City Lite et ASN Lite (CC BY 4.0), installées sur le serveur. <button type="button" class="btn btn--ghost btn--sm" id="sx-geo">Mettre à jour les bases</button>'
+      : '<button type="button" class="btn btn--primary btn--sm" id="sx-geo">Installer les bases des villes et des hébergeurs</button> pour voir d\'où viennent les visiteurs et écarter les pays inhabituels et les centres de données (1 à 2 minutes, à refaire une fois par mois).';
   }
 
   // Installation de la base des villes, par petites étapes (temps limité par requête chez l'hébergeur)
@@ -432,14 +443,16 @@
     if (!b) return;
     b.disabled = true;
     try {
-      let r = await api('geo', { method: 'POST', body: { step: 'debut' } });
-      while (r.recu < r.taille) {
-        b.textContent = `Téléchargement… ${nf0.format(pct(r.recu, r.taille))} %`;
-        r = await api('geo', { method: 'POST', body: { step: 'suite' } });
+      for (const [kind, name] of [['asn', 'hébergeurs'], ['city', 'villes']]) {
+        let r = await api('geo', { method: 'POST', body: { step: 'debut', kind } });
+        while (r.recu < r.taille) {
+          b.textContent = `Base des ${name}… ${nf0.format(pct(r.recu, r.taille))} %`;
+          r = await api('geo', { method: 'POST', body: { step: 'suite', kind } });
+        }
+        b.textContent = `Installation des ${name}…`;
+        await api('geo', { method: 'POST', body: { step: 'fin', kind } });
       }
-      b.textContent = 'Installation…';
-      await api('geo', { method: 'POST', body: { step: 'fin' } });
-      b.textContent = 'Base installée';
+      b.textContent = 'Bases installées';
     } catch (err) {
       b.disabled = false;
       b.textContent = `Échec : ${err.message}. Réessayer`;

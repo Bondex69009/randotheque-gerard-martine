@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="assets/style.css?v=36">
-  <link rel="stylesheet" href="assets/stats-admin.css?v=1">
+  <link rel="stylesheet" href="assets/stats-admin.css?v=2">
 </head>
 <body class="sx" data-site="gm" data-other="ga" data-site-name="Gérard &amp; Martine" data-other-name="Les Godillots Ailés">
   <header class="site-header">
@@ -177,7 +177,7 @@
         <div class="sx-table-wrap" id="c-recent"></div>
       </section>
 
-      <div class="sx-grid">
+      <div class="sx-grid sx-grid--3">
         <section class="sx-card" aria-labelledby="t-widget">
           <header class="sx-card__head"><h2 class="sx-card__title" id="t-widget">Compteur sur le blog</h2></header>
           <div id="c-widget"></div>
@@ -186,10 +186,14 @@
           <header class="sx-card__head"><h2 class="sx-card__title" id="t-outbound">Liens suivis vers d'autres sites</h2></header>
           <div id="c-outbound"></div>
         </section>
+        <section class="sx-card" aria-labelledby="t-rejects">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-rejects">Faux visiteurs écartés</h2></header>
+          <div id="c-rejects"></div>
+        </section>
       </div>
 
       <footer class="sx-foot">
-        <p><strong>Vie privée.</strong> Aucun cookie ni stockage sur l'appareil des visiteurs. Les adresses IP ne sont jamais enregistrées : elles servent sur le moment à trouver la ville et à calculer une empreinte anonyme dont la clé change chaque jour (un visiteur qui revient un autre jour compte comme nouveau). Les robots, outils automatiques et navigateurs non standard sont écartés, ainsi que l'adresse de l'administrateur connecté. Données effacées au bout de 25 mois. Conforme aux conditions de la CNIL pour se passer de bandeau cookie.</p>
+        <p><strong>Vie privée.</strong> Aucun cookie ni stockage sur l'appareil des visiteurs. Les adresses IP ne sont jamais enregistrées : elles servent sur le moment à trouver la ville et à calculer une empreinte anonyme dont la clé change chaque jour (un visiteur qui revient un autre jour compte comme nouveau). Les robots, outils automatiques, navigateurs non standard, visites depuis des pays inhabituels ou des centres de données sont écartés, ainsi que l'adresse de l'administrateur connecté. Données effacées au bout de 25 mois. Conforme aux conditions de la CNIL pour se passer de bandeau cookie.</p>
         <p id="sx-geo-note"></p>
       </footer>
     </div>
@@ -197,6 +201,6 @@
 
   <div class="sx-tip" id="sx-tip" role="tooltip" hidden></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="assets/stats-admin.js?v=1"></script>
+  <script src="assets/stats-admin.js?v=2"></script>
 </body>
 </html>
