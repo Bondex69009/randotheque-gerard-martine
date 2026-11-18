@@ -1,101 +1,49 @@
-# Mise à jour automatique de la Randothèque, toutes les heures, depuis les deux blogs de Gé (photosge30132 et gr-ge-30132).
-# Le site est envoyé par FTP chez o2switch : https://randotheque.anthony-bondon.fr/gerard-martine/
-# Secrets du dépôt : FTP_HOST, FTP_USER, FTP_PASSWORD (compte FTP qui arrive à la racine du sous-domaine).
-# GitHub Pages ne sert plus qu'à rediriger les anciennes adresses (liens partagés, gadget du blog).
-name: Mise à jour horaire
+# Ce dépôt n'est plus utilisé : la Randothèque de Gérard & Martine vit maintenant dans le dépôt
+# Bondex69009/randotheque (dossier gerard-martine/) et en ligne sur
+# https://randotheque.anthony-bondon.fr/gerard-martine/
+#
+# Il ne sert plus qu'à une chose : rediriger les anciennes adresses
+# bondex69009.github.io/randotheque-gerard-martine/… (liens partagés, favoris, appli installée)
+# vers le nouveau site, chemin et #rando=… conservés. La redirection n'est publiée que
+# lorsque le nouveau site répond ; d'ici là, GitHub Pages garde l'ancienne version.
+name: Redirection vers le nouveau site
 
 on:
   schedule:
-    # Toutes les heures à hh:07 (pas à l'heure pile : c'est là que GitHub retarde ou abandonne
-    # le plus ses tâches programmées). Un passage sauté est rattrapé par le suivant.
-    - cron: '7 * * * *'
-  workflow_dispatch:        # bouton « Run workflow » pour lancer une mise à jour à la main
+    - cron: '17 */6 * * *'   # toutes les 6 heures, jusqu'à ce que le nouveau site réponde
+  workflow_dispatch:
   push:
     branches: [main]
 
 permissions:
-  contents: write   # enregistrer les nouveaux GPX dans le dépôt
+  contents: read
   pages: write
   id-token: write
 
 concurrency:
-  group: randotheque-gerard-martine
+  group: redirection
   cancel-in-progress: false
 
+env:
+  NOUVEAU: https://randotheque.anthony-bondon.fr/gerard-martine/
+
 jobs:
-  mise-a-jour:
+  redirection:
     runs-on: ubuntu-latest
-    timeout-minutes: 60   # le tout premier envoi FTP (2 000 fichiers) est long ; ensuite seuls les changements partent
+    timeout-minutes: 5
     environment:
       name: github-pages
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Récupérer les nouveautés des deux blogs
-        run: node scripts/scrape-blog.mjs
-
-      - name: Générer les données du site
-        run: node scripts/build.mjs
-
-      - name: Récupérer les randos du blog Poulx (recherche « Chercher aussi sur », hors club)
-        run: node scripts/scrape-poulx.mjs
-        continue-on-error: true
-
-      - name: Enregistrer les nouveaux fichiers dans le dépôt
-        run: |
-          git config user.name "Randothèque (mise à jour automatique)"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A gpx/blog audio data/blog-catalog.json .cache externes
-          if git diff --cached --quiet; then
-            echo "Rien de nouveau."
-          else
-            git commit -m "Mise à jour depuis les blogs du $(TZ=Europe/Paris date '+%d/%m/%Y à %Hh%M')"
-            # Si le dépôt a bougé entre-temps, on garde nos fichiers fraîchement générés
-            # (« -X theirs » désigne, pendant un rebase, le commit qu'on rejoue : le nôtre).
-            for essai in 1 2 3; do
-              git pull --rebase -X theirs origin main && git push && break
-              echo "Nouvel essai d'enregistrement ($essai)…"; sleep 5
-            done
-          fi
-
-      - name: Récupérer la liste des randos RandoGPS (recherche « Chercher aussi sur », hors club)
-        run: node scripts/scrape-randogps.mjs
-        continue-on-error: true
-
-      - name: Préparer le site
-        run: node scripts/build-site.mjs
-
-      - name: Envoyer le site chez o2switch (FTP)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          local-dir: ./_site/
-          server-dir: ./gerard-martine/
-          exclude: |
-            **/.git*
-            **/.git*/**
-
-      # Garde-fou : on ne redirige GitHub Pages que si le nouveau site répond vraiment
-      # (DNS, certificat HTTPS et fichiers en place). Sinon Pages garde la version précédente.
       - name: Vérifier que le nouveau site répond
         id: enligne
         run: |
-          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://randotheque.anthony-bondon.fr/gerard-martine/" || echo 000)
-          echo "https://randotheque.anthony-bondon.fr/gerard-martine/ : $code"
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "$NOUVEAU" || echo 000)
+          echo "$NOUVEAU : $code"
           if [ "$code" = "200" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
-          else echo "::warning::Le nouveau site ne répond pas encore ($code) : GitHub Pages n'est pas redirigé pour l'instant."; fi
+          else echo "::notice::Le nouveau site ne répond pas encore ($code) : rien n'est changé sur GitHub Pages."; fi
 
-      # Anciennes adresses github.io : une page qui renvoie vers la même page sur le nouveau site
-      # (chemin, recherche et #rando=… conservés), y compris dans l'iframe du compteur sur le blog.
-      - name: Préparer la redirection depuis GitHub Pages
+      - name: Préparer la redirection
         if: steps.enligne.outputs.ok == 'true'
         run: |
           mkdir -p _redirect
