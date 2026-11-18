@@ -994,3 +994,11 @@ h1, h2, h3 { line-height: var(--lh-tight); margin: 0; }
   .brand__title, .brand__subtitle { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .header-nav { flex: none; }
 }
+
+/* Accès discret à l'espace administrateur (statistiques) */
+.admin-link {
+  display: inline-grid; place-items: center; width: 2rem; height: 2rem; margin-left: calc(-1 * var(--space-2));
+  color: var(--c-text-faint); opacity: 0.45; border-radius: var(--radius-pill); transition: opacity 0.15s, color 0.15s;
+}
+.admin-link:hover, .admin-link:focus-visible { opacity: 1; color: var(--c-accent); }
+.admin-link .icon { width: 0.95rem; height: 0.95rem; }
