@@ -78,6 +78,14 @@ Les corrections sont enregistrées dans `data/overrides.json` et survivent aux s
 L'administration a besoin du serveur `npm run serve` ; elle ne fonctionne pas sur un hébergement purement statique
 (GitHub Pages, Netlify…).
 
+## Statistiques de visite (espace stats)
+
+Adresse : `https://bondex69009.github.io/randotheque-gerard-martine/stats.html` (mot de passe). L'espace montre visiteurs, visites, fiches ouvertes, GPX téléchargés, survols 3D, duels VS, partages, recherches tapées, filtres utilisés, sources de trafic, villes (avec carte), appareils, navigateurs, systèmes, écrans, langues, affluence par jour et heure, durée des visites, journal des dernières visites et affichages du compteur sur le blog. Un bouton passe aux statistiques de l'autre Randothèque ou des deux sites réunis.
+
+**Sans cookie, conforme RGPD** : rien n'est écrit sur l'appareil des visiteurs, les adresses IP ne sont jamais enregistrées (empreinte anonyme dont la clé change chaque jour), données effacées après 25 mois. Pas de bandeau cookie nécessaire. Seuls les vrais navigateurs (Chrome, Safari, Firefox, Edge…) sont comptés : robots, outils automatiques et navigateurs pilotés sont écartés. L'adresse de l'administrateur est notée à chaque ouverture de l'espace stats et n'est plus comptée (ses visites du jour sont aussi retirées).
+
+**Fonctionnement.** Le serveur de statistiques est commun aux deux sites et vit dans le dépôt `randotheque` (dossier `stats-serveur/`, mise en place décrite dans son README). GitHub Pages ne sait pas recevoir de données : un petit serveur PHP (`stats-serveur/`, base SQLite) tourne chez o2switch, à l'adresse `https://stats-rando.anthony-bondon.fr/api.php`. Il sert les deux Randothèques. Le script `assets/stats.js` des sites lui envoie les visites ; `stats.html` lit les chiffres avec un jeton obtenu par mot de passe. L'adresse du serveur est écrite en haut de `assets/stats.js` et de `assets/stats-admin.js` (dans les deux dépôts).
+
 ## Ajouter vos propres GPX à la main
 
 1. Déposez vos fichiers `.gpx` dans `gpx/mes-randos/` (ou n'importe quel sous-dossier de `gpx/`).

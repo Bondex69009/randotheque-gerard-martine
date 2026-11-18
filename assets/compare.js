@@ -255,6 +255,7 @@
       const rs = ids.map(getR).filter(Boolean);
       if (rs.length < 2) return;
       shown = rs.slice(0, 2);
+      if (window.rtStat) window.rtStat('vs', `${shown[0].name} vs ${shown[1].name}`, shown.map((r) => r.id).join(','));
       render();
       if (!dlg.open) dlg.showModal();
       dlg.scrollTop = 0;

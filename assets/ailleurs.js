@@ -246,6 +246,7 @@
     const b = e.target.closest('[data-src]');
     if (!b) return;
     active = active === b.dataset.src ? null : b.dataset.src;
+    if (active && window.rtStat) window.rtStat('ailleurs', `${b.textContent.trim()}${term ? ` : ${term}` : ''}`);
     if (active) searchAll(); else render();
   });
   panel.addEventListener('click', async (e) => {

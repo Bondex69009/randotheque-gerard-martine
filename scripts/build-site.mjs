@@ -18,6 +18,8 @@ if (!fs.existsSync(path.join(ROOT, 'data', 'randos.js'))) {
 }
 copy('index.html', 'index.html');
 copy('compteur.html', 'compteur.html');
+// Espace statistiques (mot de passe vérifié par le serveur de stats, rien de secret dans la page)
+copy('stats.html', 'stats.html');
 // Les données changent à chaque mise à jour : on ajoute un numéro de version à leur adresse
 // pour que les navigateurs (et le gadget du blog) ne réutilisent pas une ancienne copie en cache.
 const version = Date.now().toString(36);

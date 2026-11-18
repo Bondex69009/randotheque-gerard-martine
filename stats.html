@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Statistiques | La Randothèque de Gérard &amp; Martine</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0d1322">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="assets/style.css?v=35">
+  <link rel="stylesheet" href="assets/stats-admin.css?v=1">
+</head>
+<body class="sx" data-site="gm" data-other="ga" data-site-name="Gérard &amp; Martine" data-other-name="Les Godillots Ailés">
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="./" aria-label="Retour à la Randothèque de Gérard et Martine">
+        <img class="brand__logo" src="assets/logo.svg" width="48" height="48" alt="">
+        <span class="brand__text">
+          <span class="brand__title">Statistiques <span class="sx-badge">Admin</span></span>
+          <span class="brand__subtitle">de Gérard &amp; Martine</span>
+        </span>
+      </a>
+      <button type="button" class="btn btn--ghost btn--sm" id="sx-logout" hidden>Se déconnecter</button>
+    </div>
+  </header>
+
+  <main class="container sx-main">
+    <!-- Connexion -->
+    <section class="sx-login" id="sx-login" aria-labelledby="sx-login-title" hidden>
+      <form class="sx-login__card" id="sx-login-form">
+        <svg class="sx-login__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <h1 class="sx-login__title" id="sx-login-title">Espace statistiques</h1>
+        <p class="sx-login__lead">Réservé aux gestionnaires du site. Une fois connecté, votre adresse internet n'est plus comptée dans les visites.</p>
+        <label class="sx-label" for="sx-password">Mot de passe</label>
+        <input class="sx-input" id="sx-password" type="password" autocomplete="current-password" required>
+        <p class="sx-login__error" id="sx-login-error" role="alert"></p>
+        <button class="btn btn--primary btn--block" type="submit">Se connecter</button>
+      </form>
+    </section>
+
+    <!-- Tableau de bord -->
+    <div id="sx-app" hidden>
+      <div class="sx-toolbar" role="group" aria-label="Choix des données">
+        <div class="sx-seg" id="sx-site" role="radiogroup" aria-label="Site"></div>
+        <div class="sx-seg" id="sx-period" role="radiogroup" aria-label="Période">
+          <button type="button" data-p="today">Aujourd'hui</button>
+          <button type="button" data-p="yesterday">Hier</button>
+          <button type="button" data-p="7d">7 j</button>
+          <button type="button" data-p="30d">30 j</button>
+          <button type="button" data-p="90d">90 j</button>
+          <button type="button" data-p="12m">12 mois</button>
+          <button type="button" data-p="all">Tout</button>
+        </div>
+        <div class="sx-custom">
+          <label class="visually-hidden" for="sx-from">Du</label>
+          <input class="sx-input sx-input--date" type="date" id="sx-from">
+          <span aria-hidden="true">→</span>
+          <label class="visually-hidden" for="sx-to">Au</label>
+          <input class="sx-input sx-input--date" type="date" id="sx-to">
+        </div>
+      </div>
+
+      <div class="sx-live" id="sx-live" aria-live="polite"></div>
+
+      <p class="sx-summary" id="sx-summary"></p>
+
+      <section class="sx-kpis" id="sx-kpis" aria-label="Indicateurs clés"></section>
+
+      <section class="sx-card sx-card--wide" aria-labelledby="t-evo">
+        <header class="sx-card__head">
+          <h2 class="sx-card__title" id="t-evo">Évolution</h2>
+          <div class="sx-seg sx-seg--sm" id="sx-metric" role="radiogroup" aria-label="Mesure affichée"></div>
+        </header>
+        <div class="sx-chart" id="c-evo"></div>
+      </section>
+
+      <div class="sx-grid">
+        <section class="sx-card" aria-labelledby="t-funnel">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-funnel">Du clic au GPX</h2></header>
+          <div id="c-funnel"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-actions">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-actions">Ce que font les visiteurs</h2></header>
+          <div id="c-actions"></div>
+        </section>
+      </div>
+
+      <section class="sx-card sx-card--wide" aria-labelledby="t-randos">
+        <header class="sx-card__head"><h2 class="sx-card__title" id="t-randos">Randos les plus consultées</h2></header>
+        <div class="sx-table-wrap" id="c-randos"></div>
+      </section>
+
+      <div class="sx-grid sx-grid--3">
+        <section class="sx-card" aria-labelledby="t-search">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-search">Recherches tapées</h2></header>
+          <div id="c-search"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-filters">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-filters">Filtres utilisés</h2></header>
+          <div id="c-filters"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-vs">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-vs">Duels VS et « Chercher aussi sur »</h2></header>
+          <div id="c-vs"></div>
+        </section>
+      </div>
+
+      <div class="sx-grid">
+        <section class="sx-card" aria-labelledby="t-sources">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-sources">D'où viennent les visiteurs</h2></header>
+          <div id="c-sources"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-referrers">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-referrers">Sites, campagnes et portes d'entrée</h2></header>
+          <div id="c-referrers"></div>
+        </section>
+      </div>
+
+      <section class="sx-card sx-card--wide" aria-labelledby="t-geo">
+        <header class="sx-card__head"><h2 class="sx-card__title" id="t-geo">Villes des visiteurs</h2></header>
+        <div class="sx-geo">
+          <div class="sx-map" id="c-map" role="img" aria-label="Carte des villes des visiteurs"></div>
+          <div id="c-cities"></div>
+        </div>
+      </section>
+
+      <div class="sx-grid sx-grid--3">
+        <section class="sx-card" aria-labelledby="t-devices">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-devices">Appareils</h2></header>
+          <div id="c-devices"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-browsers">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-browsers">Navigateurs</h2></header>
+          <div id="c-browsers"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-os">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-os">Systèmes</h2></header>
+          <div id="c-os"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-screens">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-screens">Largeur d'écran</h2></header>
+          <div id="c-screens"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-langs">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-langs">Langue et pays</h2></header>
+          <div id="c-langs"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-misc">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-misc">Appli et thème</h2></header>
+          <div id="c-misc"></div>
+        </section>
+      </div>
+
+      <section class="sx-card sx-card--wide" aria-labelledby="t-heat">
+        <header class="sx-card__head"><h2 class="sx-card__title" id="t-heat">Jours et heures d'affluence</h2></header>
+        <div id="c-heat"></div>
+      </section>
+
+      <div class="sx-grid">
+        <section class="sx-card" aria-labelledby="t-dur">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-dur">Durée des visites</h2></header>
+          <div id="c-dur"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-depth">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-depth">Actions par visite</h2></header>
+          <div id="c-depth"></div>
+        </section>
+      </div>
+
+      <section class="sx-card sx-card--wide" aria-labelledby="t-recent">
+        <header class="sx-card__head"><h2 class="sx-card__title" id="t-recent">Dernières visites</h2></header>
+        <div class="sx-table-wrap" id="c-recent"></div>
+      </section>
+
+      <div class="sx-grid">
+        <section class="sx-card" aria-labelledby="t-widget">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-widget">Compteur sur le blog</h2></header>
+          <div id="c-widget"></div>
+        </section>
+        <section class="sx-card" aria-labelledby="t-outbound">
+          <header class="sx-card__head"><h2 class="sx-card__title" id="t-outbound">Liens suivis vers d'autres sites</h2></header>
+          <div id="c-outbound"></div>
+        </section>
+      </div>
+
+      <footer class="sx-foot">
+        <p><strong>Vie privée.</strong> Aucun cookie ni stockage sur l'appareil des visiteurs. Les adresses IP ne sont jamais enregistrées : elles servent sur le moment à trouver la ville et à calculer une empreinte anonyme dont la clé change chaque jour (un visiteur qui revient un autre jour compte comme nouveau). Les robots, outils automatiques et navigateurs non standard sont écartés, ainsi que l'adresse de l'administrateur connecté. Données effacées au bout de 25 mois. Conforme aux conditions de la CNIL pour se passer de bandeau cookie.</p>
+        <p id="sx-geo-note"></p>
+      </footer>
+    </div>
+  </main>
+
+  <div class="sx-tip" id="sx-tip" role="tooltip" hidden></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="assets/stats-admin.js?v=1"></script>
+</body>
+</html>

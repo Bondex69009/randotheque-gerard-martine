@@ -489,7 +489,47 @@
   let rafId = 0;
   function scheduleUpdate() { cancelAnimationFrame(rafId); rafId = requestAnimationFrame(update); }
 
+  // ------------------------------------------------------------ Statistiques (assets/stats.js, sans cookie)
+  const stat = (event, label, id) => { if (window.rtStat) window.rtStat(event, label, id); };
+  const STAT_NAMES = {
+    levels: 'Niveau', years: 'Année', depts: 'Département', communes: 'Village', anims: 'Animateur',
+    types: 'Type', extras: 'Option', sources: 'Source', dist: 'Distance', dplus: 'Dénivelé', dur: 'Durée', sort: 'Tri',
+  };
+  const statSnap = () => ({
+    q: state.q, sort: state.sort, view: state.view,
+    sets: Object.fromEntries(SET_KEYS.map((k) => [k, [...state[k]]])),
+    ranges: Object.fromEntries(['dist', 'dplus', 'dur'].map((k) => [k, state[k].join('-')])),
+  });
+  let statPrev = null, statTimer = null, statPending = new Map(), statLastQ = '';
+  function statFilters() {
+    const cur = statSnap();
+    const prev = statPrev;
+    statPrev = cur;
+    if (!prev) return; // état de départ (lien partagé) : compté comme porte d'entrée, pas comme action
+    for (const k of SET_KEYS) {
+      for (const v of cur.sets[k]) {
+        if (prev.sets[k].includes(v)) continue;
+        const lvl = k === 'levels' && LEVEL_BY_ID[v] ? LEVEL_BY_ID[v].label : v;
+        statPending.set(`${k}|${v}`, `${STAT_NAMES[k]} : ${lvl}`);
+      }
+    }
+    for (const k of ['dist', 'dplus', 'dur']) {
+      const def = `${BOUNDS[k].min}-${BOUNDS[k].max}`;
+      if (cur.ranges[k] !== prev.ranges[k] && cur.ranges[k] !== def) statPending.set(k, STAT_NAMES[k]);
+    }
+    if (cur.sort !== prev.sort) statPending.set('sort', `Tri : ${cur.sort}`);
+    if (cur.view === 'map' && prev.view !== 'map') stat('map', 'Vue carte');
+    clearTimeout(statTimer);
+    statTimer = setTimeout(() => {
+      for (const label of statPending.values()) stat('filter', label);
+      statPending.clear();
+      const q = state.q.trim();
+      if (q.length >= 2 && q.toLowerCase() !== statLastQ) { statLastQ = q.toLowerCase(); stat('search', q); }
+    }, 1500);
+  }
+
   function update() {
+    statFilters();
     // Recherche « Ailleurs sur le web » (assets/ailleurs.js) : on lui passe seulement le texte
     // cherché et les communes choisies ; ses résultats ne touchent jamais aux randos du club.
     document.dispatchEvent(new CustomEvent('randos:search', { detail: { q: state.q, communes: [...state.communes] } }));
@@ -697,6 +737,7 @@
     $('#evo-tip').hidden = true;
   }
   function openEvo() {
+    stat('evo', 'Évolution du compteur');
     evoDialog.showModal();
     renderEvo(); // après ouverture : la largeur disponible est connue
   }
@@ -768,7 +809,7 @@
     $('#embed-status').textContent = '';
   }
   document.addEventListener('click', async (e) => {
-    if (e.target.closest('#open-embed')) { paintEmbed(); embedDialog.showModal(); $('#embed-copy').focus(); return; }
+    if (e.target.closest('#open-embed')) { stat('embed', 'Code du compteur'); paintEmbed(); embedDialog.showModal(); $('#embed-copy').focus(); return; }
     if (e.target === embedDialog || e.target.closest('[data-close-embed]')) { embedDialog.close(); return; }
     if (e.target.closest('#embed-copy')) {
       const area = $('#embed-code');
@@ -890,6 +931,7 @@
     form.remove();
   }
   async function sendToIbp(r) {
+    stat('ibp', r.name, r.id);
     const cached = gpxCache.get(r.id);
     try {
       // GPX déjà préchargé : envoi immédiat, pendant le clic (aucun blocage de fenêtre)
@@ -1065,6 +1107,7 @@
 
   async function exportPng(r, btn) {
     if (!r) return;
+    stat('png', r.name, r.id);
     const label = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Création de l\'image…'; }
     try {
@@ -1167,6 +1210,7 @@
         if (!audio.paused) { audio.pause(); return; }
         for (const other of $$('audio', root)) if (other !== audio) other.pause(); // un seul résumé à la fois
         setBtn('loading');
+        stat('audio', r.name, r.id);
         audio.play().catch(() => setBtn('paused'));
         if ('mediaSession' in navigator && window.MediaMetadata) {
           navigator.mediaSession.metadata = new MediaMetadata({
@@ -1427,6 +1471,7 @@
     openId = id;
     if (push) writeHash();
     stopAudio();
+    stat(r.external ? 'ext' : 'rando', r.name, r.external ? '' : r.id);
     $('#detail-content').innerHTML = r.external ? detailExtHtml(r) : detailHtml(r);
     setupPlayers($('#detail-content'), r);
     if (!dialog.open) dialog.showModal();
@@ -1508,6 +1553,7 @@
     const txt = label && label.textContent;
     if (btn) { btn.disabled = true; if (label) label.textContent = 'Chargement…'; }
     try {
+      stat('fly_duel', rs.map((r) => r.name).join(' vs '));
       await loadFlyover();
       const tracks = await Promise.all(rs.map((r) => loadTrack(r.id)));
       window.RTFlyover.duel({
@@ -1528,6 +1574,7 @@
     const label = btn && $('.btn__label', btn);
     if (btn) { btn.disabled = true; if (label) label.textContent = 'Chargement…'; }
     try {
+      stat('fly', r.name, r.id);
       await loadFlyover();
       const track = await loadTrack(id);
       stopAudio();
@@ -1551,6 +1598,7 @@
   async function openShare(id, btn) {
     const r = getR(id);
     if (!r) return;
+    stat('share', r.name, r.id);
     const label = btn && $('.btn__label', btn);
     if (btn) { btn.disabled = true; if (label) label.textContent = 'Chargement…'; }
     try {
@@ -1830,6 +1878,8 @@
   document.addEventListener('click', (e) => { if (e.target.closest('[data-action="reset"]')) resetAll(); });
 
   document.addEventListener('click', (e) => {
+    const dl = e.target.closest('a[download]');
+    if (dl && openId && byId.has(openId) && /\.gpx$/i.test(dl.getAttribute('href') || '')) { const r = byId.get(openId); stat('gpx', r.name, r.id); }
     const share = e.target.closest('[data-share]');
     if (share) { openShare(share.dataset.share, share); return; }
     const fly = e.target.closest('[data-fly]');
