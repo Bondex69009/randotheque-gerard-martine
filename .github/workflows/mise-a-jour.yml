@@ -83,9 +83,20 @@ jobs:
             **/.git*
             **/.git*/**
 
+      # Garde-fou : on ne redirige GitHub Pages que si le nouveau site répond vraiment
+      # (DNS, certificat HTTPS et fichiers en place). Sinon Pages garde la version précédente.
+      - name: Vérifier que le nouveau site répond
+        id: enligne
+        run: |
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://randotheque.anthony-bondon.fr/gerard-martine/" || echo 000)
+          echo "https://randotheque.anthony-bondon.fr/gerard-martine/ : $code"
+          if [ "$code" = "200" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
+          else echo "::warning::Le nouveau site ne répond pas encore ($code) : GitHub Pages n'est pas redirigé pour l'instant."; fi
+
       # Anciennes adresses github.io : une page qui renvoie vers la même page sur le nouveau site
       # (chemin, recherche et #rando=… conservés), y compris dans l'iframe du compteur sur le blog.
       - name: Préparer la redirection depuis GitHub Pages
+        if: steps.enligne.outputs.ok == 'true'
         run: |
           mkdir -p _redirect
           cat > _redirect/index.html <<'EOF'
@@ -103,11 +114,14 @@ jobs:
           touch _redirect/.nojekyll
 
       - uses: actions/configure-pages@v5
+        if: steps.enligne.outputs.ok == 'true'
 
       - uses: actions/upload-pages-artifact@v3
+        if: steps.enligne.outputs.ok == 'true'
         with:
           path: _redirect
 
       - name: Publier la redirection sur GitHub Pages
+        if: steps.enligne.outputs.ok == 'true'
         id: deploiement
         uses: actions/deploy-pages@v4
