@@ -16,32 +16,39 @@ npm run serve    # ouvre la Randothèque sur http://localhost:8080
 
 On peut aussi ouvrir directement `index.html` dans un navigateur.
 
-## Mise en ligne automatique (GitHub Pages)
+## Mise en ligne automatique (o2switch, FTP)
 
-Le site public est hébergé gratuitement sur GitHub Pages et se met à jour tout seul toutes les heures, à hh:07.
-La tâche `.github/workflows/mise-a-jour.yml` lit les deux blogs, télécharge les nouveaux GPX et résumés audio, les
-enregistre dans le dépôt, régénère le site et le publie. GitHub ne garantit pas l'heure exacte de ses tâches
-programmées ; un passage sauté est rattrapé l'heure suivante. La tâche ne crée un commit que s'il y a du nouveau,
-et le haut du site indique l'heure de la dernière vérification. Personne n'a besoin de se connecter.
+Le site est hébergé chez o2switch : **https://randotheque.anthony-bondon.fr/gerard-martine/** (l'autre Randothèque est dans
+le dossier voisin, le serveur de statistiques dans `/stats/`). Il se met à jour tout seul toutes les heures, à hh:07.
+La tâche `.github/workflows/mise-a-jour.yml` lit le blog, télécharge les nouveaux GPX et résumés audio, les
+enregistre dans le dépôt, régénère le site (`_site/`) et l'envoie par FTP. Seuls les fichiers modifiés partent
+(inventaire `.ftp-deploy-sync-state.json` laissé dans le dossier distant). GitHub ne garantit pas l'heure exacte de
+ses tâches programmées ; un passage sauté est rattrapé l'heure suivante.
 
-Un article modifié sur le blog est relu (nom, date, IBP, itinéraire GR…). Pour les articles de la première page du
+Un article modifié sur le blog est relu (nom, date, IBP, animateurs…). Pour les articles de la première page du
 blog, les GPX et audios sont en plus retéléchargés à chaque passage. Un fichier remplacé sur Google Drive est donc
 repris sous le même nom. Si le lien GPX change, ou si l'article est remplacé par un autre (par exemple « prochaine
 sortie » puis l'article définitif), l'ancien fichier est supprimé et le nouveau prend son nom.
 
 Mise en place, une seule fois :
 
-1. Créer un dépôt public `randotheque-gerard-martine` sur GitHub et y envoyer ce dossier.
-2. Dans le dépôt : Settings > Pages > Build and deployment > Source : « GitHub Actions ».
-3. Onglet Actions > Mise à jour horaire > Run workflow, pour la première publication.
-4. Le site est alors disponible sur `https://bondex69009.github.io/randotheque-gerard-martine/`.
+1. cPanel o2switch > *Domaines* : sous-domaine `randotheque.anthony-bondon.fr`. cPanel > *Comptes FTP* : un compte
+   dont le répertoire est la racine de ce sous-domaine.
+2. Cloudflare (DNS de `anthony-bondon.fr`) : enregistrement `A` `randotheque` vers l'IP partagée o2switch, **DNS only**
+   (nuage gris). cPanel > *SSL/TLS Status* : vérifier que le certificat couvre le sous-domaine.
+3. GitHub, dépôt `randotheque-gerard-martine` > *Settings > Secrets and variables > Actions* : `FTP_HOST` (`xxx.o2switch.net`),
+   `FTP_USER` (`nom@anthony-bondon.fr`), `FTP_PASSWORD`.
+4. Onglet Actions > Mise à jour horaire > Run workflow. Le premier envoi (environ 2 000 fichiers) prend un moment.
+
+GitHub Pages ne sert plus qu'à rediriger les anciennes adresses `bondex69009.github.io/randotheque-gerard-martine/…` vers le nouveau site
+(chemin et `#rando=…` conservés, y compris le gadget du compteur déjà collé sur le blog). Cette redirection n'est publiée
+qu'après un envoi FTP réussi.
 
 Pour forcer une mise à jour sans attendre : Actions > Mise à jour horaire > Run workflow.
 En cas d'échec, GitHub envoie un e-mail au propriétaire du dépôt.
 
 Le site n'est pas destiné aux moteurs de recherche : la page porte `<meta name="robots" content="noindex, nofollow">`
-et un `robots.txt` interdit l'exploration. Sur GitHub Pages, les robots ne lisent ce fichier qu'à la racine du
-domaine (`https://<compte>.github.io/robots.txt`), c'est-à-dire dans un dépôt nommé `<compte>.github.io`.
+et le `robots.txt` à la racine du sous-domaine interdit l'exploration.
 
 `npm run site` prépare en local le dossier `_site/` tel qu'il sera publié.
 L'interface d'administration n'est pas publiée en ligne ; elle reste utilisable en local avec `npm run serve`.
@@ -80,11 +87,11 @@ L'administration a besoin du serveur `npm run serve` ; elle ne fonctionne pas su
 
 ## Statistiques de visite (espace stats)
 
-Adresse : `https://bondex69009.github.io/randotheque-gerard-martine/stats.html` (mot de passe). L'espace montre visiteurs, visites, fiches ouvertes, GPX téléchargés, survols 3D, duels VS, partages, recherches tapées, filtres utilisés, sources de trafic, villes (avec carte), appareils, navigateurs, systèmes, écrans, langues, affluence par jour et heure, durée des visites, journal des dernières visites et affichages du compteur sur le blog. Un bouton passe aux statistiques de l'autre Randothèque ou des deux sites réunis.
+Adresse : `https://randotheque.anthony-bondon.fr/gerard-martine/stats.html` (mot de passe). L'espace montre visiteurs, visites, fiches ouvertes, GPX téléchargés, survols 3D, duels VS, partages, recherches tapées, filtres utilisés, sources de trafic, villes (avec carte), appareils, navigateurs, systèmes, écrans, langues, affluence par jour et heure, durée des visites, journal des dernières visites et affichages du compteur sur le blog. Un bouton passe aux statistiques de l'autre Randothèque ou des deux sites réunis.
 
 **Sans cookie, conforme RGPD** : rien n'est écrit sur l'appareil des visiteurs, les adresses IP ne sont jamais enregistrées (empreinte anonyme dont la clé change chaque jour), données effacées après 25 mois. Pas de bandeau cookie nécessaire. Seuls les vrais navigateurs (Chrome, Safari, Firefox, Edge…) sont comptés : robots, outils automatiques et navigateurs pilotés sont écartés. Sont aussi écartées les visites venues de pays inhabituels (liste des pays acceptés dans `stats-serveur/config.php` : Europe, Amérique du Nord, Maghreb, outre-mer, Australie / Nouvelle-Zélande ; pays inconnu = gardé) et celles qui sortent d'un centre de données (AWS, OVH, Hetzner, Google Cloud…). Le tableau de bord compte ces faux visiteurs à part (carte « Faux visiteurs écartés »). L'adresse de l'administrateur est notée à chaque ouverture de l'espace stats et n'est plus comptée (ses visites du jour sont aussi retirées).
 
-**Fonctionnement.** Le serveur de statistiques est commun aux deux sites et vit dans le dépôt `randotheque` (dossier `stats-serveur/`, mise en place décrite dans son README). GitHub Pages ne sait pas recevoir de données : un petit serveur PHP (`stats-serveur/`, base SQLite) tourne chez o2switch, à l'adresse `https://stats-rando.anthony-bondon.fr/api.php`. Il sert les deux Randothèques. Le script `assets/stats.js` des sites lui envoie les visites ; `stats.html` lit les chiffres avec un jeton obtenu par mot de passe. L'adresse du serveur est écrite en haut de `assets/stats.js` et de `assets/stats-admin.js` (dans les deux dépôts).
+**Fonctionnement.** Le serveur de statistiques est commun aux deux sites et vit dans le dépôt `randotheque` (dossier `stats-serveur/`, mise en place décrite dans son README) ; il tourne à l'adresse `https://randotheque.anthony-bondon.fr/stats/api.php`. Il sert les deux Randothèques. Le script `assets/stats.js` des sites lui envoie les visites ; `stats.html` lit les chiffres avec un jeton obtenu par mot de passe. L'adresse du serveur est écrite en haut de `assets/stats.js` et de `assets/stats-admin.js` (dans les deux dépôts).
 
 ## Ajouter vos propres GPX à la main
 

@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const PROD = 'https://stats-rando.anthony-bondon.fr/api.php';
+  const PROD = 'https://randotheque.anthony-bondon.fr/stats/api.php';
   const DEV = 'http://localhost:8099/api.php';
   const API = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) ? DEV : PROD;
   const KEY = 'rt-stats-token'; // navigateur de l'administrateur seulement

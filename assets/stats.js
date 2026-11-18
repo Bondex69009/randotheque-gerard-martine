@@ -9,7 +9,7 @@
   if (!me || !window.fetch || !window.JSON || !window.URLSearchParams) return;
 
   // Serveur de statistiques (hébergement PHP, dossier stats-serveur/ du dépôt rando-theque).
-  var PROD = 'https://stats-rando.anthony-bondon.fr/api.php';
+  var PROD = 'https://randotheque.anthony-bondon.fr/stats/api.php';
   var DEV = 'http://localhost:8099/api.php'; // php -S localhost:8099 -t stats-serveur
   var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   var END = me.getAttribute('data-endpoint') || (local ? DEV : PROD);

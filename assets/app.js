@@ -782,7 +782,7 @@
 
   // ------------------------------------------------------------ Compteur à intégrer sur un blog
   // Adresse publique du site (à renseigner une fois publié, pour copier le code depuis une version locale)
-  const PUBLIC_URL = 'https://bondex69009.github.io/randotheque-gerard-martine/';
+  const PUBLIC_URL = 'https://randotheque.anthony-bondon.fr/gerard-martine/';
   const embedDialog = $('#embed');
   const embedBase = () => ((/^(localhost|127\.|\[::1\])/.test(location.hostname) || location.protocol === 'file:') && PUBLIC_URL
     ? PUBLIC_URL : new URL('./', location.href).href);

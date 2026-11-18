@@ -1,5 +1,7 @@
 # Mise à jour automatique de la Randothèque, toutes les heures, depuis les deux blogs de Gé (photosge30132 et gr-ge-30132).
-# Le site est publié sur GitHub Pages (Settings > Pages > Source : « GitHub Actions »).
+# Le site est envoyé par FTP chez o2switch : https://randotheque.anthony-bondon.fr/gerard-martine/
+# Secrets du dépôt : FTP_HOST, FTP_USER, FTP_PASSWORD (compte FTP qui arrive à la racine du sous-domaine).
+# GitHub Pages ne sert plus qu'à rediriger les anciennes adresses (liens partagés, gadget du blog).
 name: Mise à jour horaire
 
 on:
@@ -23,7 +25,7 @@ concurrency:
 jobs:
   mise-a-jour:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60   # le tout premier envoi FTP (2 000 fichiers) est long ; ensuite seuls les changements partent
     environment:
       name: github-pages
       url: ${{ steps.deploiement.outputs.page_url }}
@@ -68,12 +70,44 @@ jobs:
       - name: Préparer le site
         run: node scripts/build-site.mjs
 
+      - name: Envoyer le site chez o2switch (FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./_site/
+          server-dir: ./gerard-martine/
+          exclude: |
+            **/.git*
+            **/.git*/**
+
+      # Anciennes adresses github.io : une page qui renvoie vers la même page sur le nouveau site
+      # (chemin, recherche et #rando=… conservés), y compris dans l'iframe du compteur sur le blog.
+      - name: Préparer la redirection depuis GitHub Pages
+        run: |
+          mkdir -p _redirect
+          cat > _redirect/index.html <<'EOF'
+          <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex">
+          <title>La Randothèque a déménagé</title>
+          <script>
+            var base = 'https://randotheque.anthony-bondon.fr/gerard-martine/';
+            var rest = location.pathname.replace(/^\/[^\/]+\/?/, '');
+            location.replace(base + rest + location.search + location.hash);
+          </script>
+          <meta http-equiv="refresh" content="0; url=https://randotheque.anthony-bondon.fr/gerard-martine/"></head>
+          <body><p>La Randothèque a déménagé : <a href="https://randotheque.anthony-bondon.fr/gerard-martine/">https://randotheque.anthony-bondon.fr/gerard-martine/</a></p></body></html>
+          EOF
+          for f in 404 compteur stats; do cp _redirect/index.html _redirect/$f.html; done
+          touch _redirect/.nojekyll
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: _redirect
 
-      - name: Publier sur GitHub Pages
+      - name: Publier la redirection sur GitHub Pages
         id: deploiement
         uses: actions/deploy-pages@v4
