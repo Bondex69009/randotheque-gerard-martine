@@ -40,7 +40,12 @@ jobs:
         run: |
           code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "$NOUVEAU" || echo 000)
           echo "$NOUVEAU : $code"
-          if [ "$code" = "200" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
+          # La redirection ne change jamais : une fois en ligne, inutile de republier GitHub Pages à chaque
+          # passage (le déploiement Pages échoue de temps en temps côté GitHub et envoie un mail d'échec).
+          deja=$(curl -sS --max-time 20 "https://bondex69009.github.io/randotheque-gerard-martine/" || true)
+          if echo "$deja" | grep -q "La Randothèque a déménagé" && echo "$deja" | grep -q "randotheque.anthony-bondon.fr/gerard-martine/"; then
+            echo "La redirection est déjà en place sur GitHub Pages : rien à republier."
+          elif [ "$code" = "200" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
           else echo "::notice::Le nouveau site ne répond pas encore ($code) : rien n'est changé sur GitHub Pages."; fi
 
       - name: Préparer la redirection
@@ -73,3 +78,4 @@ jobs:
         if: steps.enligne.outputs.ok == 'true'
         id: deploiement
         uses: actions/deploy-pages@v4
+        continue-on-error: true   # un raté de Pages ne doit pas marquer le run en échec
