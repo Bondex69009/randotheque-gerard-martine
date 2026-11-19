@@ -1,3 +1,7 @@
+> **Dépôt archivé dans les faits.** La Randothèque de Gérard & Martine vit maintenant dans le dépôt
+> `Bondex69009/randotheque` (dossier `gerard-martine/`), mise en ligne par FTP chez o2switch sur
+> https://randotheque.anthony-bondon.fr/gerard-martine/. Ce dépôt n'a plus aucune tâche automatique.
+
 # La Randothèque de Gérard & Martine
 
 Catalogue des randonnées de Gérard & Martine, construit automatiquement à partir des fichiers GPX publiés sur leurs
@@ -40,9 +44,9 @@ Mise en place, une seule fois :
    `FTP_USER` (`nom@anthony-bondon.fr`), `FTP_PASSWORD`.
 4. Onglet Actions > Mise à jour horaire > Run workflow. Le premier envoi (environ 2 000 fichiers) prend un moment.
 
-GitHub Pages ne sert plus qu'à rediriger les anciennes adresses `bondex69009.github.io/randotheque-gerard-martine/…` vers le nouveau site
-(chemin et `#rando=…` conservés, y compris le gadget du compteur déjà collé sur le blog). Cette redirection n'est publiée
-qu'après un envoi FTP réussi.
+GitHub Pages n'est plus publié : l'ancienne adresse `bondex69009.github.io/randotheque-gerard-martine/…` sert la page
+de redirection mise en ligne en dernier (chemin et `#rando=…` conservés, y compris le gadget du compteur collé sur le blog).
+Ne pas désactiver Pages dans les réglages tant que d'anciens liens circulent.
 
 Pour forcer une mise à jour sans attendre : Actions > Mise à jour horaire > Run workflow.
 En cas d'échec, GitHub envoie un e-mail au propriétaire du dépôt.
